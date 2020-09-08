@@ -1,0 +1,117 @@
+{
+    "jsonrpc": "2.0",
+    "id": "0",
+    "result": [
+        {
+            "id": 211283,
+            "date": 20200831,
+            "startTime": 750,
+            "endTime": 835,
+            "kl": [
+                {
+                    "id": 239
+                }
+            ],
+            "su": [
+                {
+                    "id": 318
+                }
+            ],
+            "ro": [
+                {
+                    "id": 134
+                }
+            ],
+            "activityType": "Unterricht"
+        },
+        {
+            "id": 212991,
+            "date": 20200831,
+            "startTime": 1140,
+            "endTime": 1225,
+            "kl": [
+                {
+                    "id": 239
+                }
+            ],
+            "su": [
+                {
+                    "id": 324
+                }
+            ],
+            "ro": [
+                {
+                    "id": 154
+                }
+            ],
+            "activityType": "Unterricht"
+        },
+        {
+            "id": 219065,
+            "date": 20200831,
+            "startTime": 945,
+            "endTime": 1030,
+            "kl": [
+                {
+                    "id": 239
+                }
+            ],
+            "su": [
+                {
+                    "id": 346
+                }
+            ],
+            "ro": [
+                {
+                    "id": 155
+                }
+            ],
+            "activityType": "Unterricht"
+        },
+        {
+            "id": 219066,
+            "date": 20200831,
+            "startTime": 1035,
+            "endTime": 1120,
+            "kl": [
+                {
+                    "id": 239
+                }
+            ],
+            "su": [
+                {
+                    "id": 346
+                }
+            ],
+            "ro": [
+                {
+                    "id": 155
+                }
+            ],
+            "activityType": "Unterricht"
+        },
+        {
+            "id": 225944,
+            "date": 20200831,
+            "startTime": 840,
+            "endTime": 925,
+            "kl": [
+                {
+                    "id": 239
+                }
+            ],
+            "su": [
+                {
+                    "id": 381
+                }
+            ],
+            "ro": [
+                {
+                    "id": 126,
+                    "orgid": 155
+                }
+            ],
+            "activityType": "Unterricht"
+        }
+    ]
+}

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17189" systemVersion="20A5354i" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="BaseClass" representedClassName="BaseClass" syncable="YES" codeGenerationType="class">
+        <attribute name="backColor" optional="YES" attributeType="String"/>
+        <attribute name="foreColor" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="longName" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="teacher1" optional="YES" attributeType="String"/>
+        <attribute name="teacher2" optional="YES" attributeType="String"/>
+        <relationship name="periods" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Period" inverseName="classes" inverseEntity="Period"/>
+    </entity>
+    <entity name="Period" representedClassName="Period" syncable="YES" codeGenerationType="class">
+        <attribute name="activityType" optional="YES" attributeType="String"/>
+        <attribute name="code" optional="YES" attributeType="String"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
+        <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="statflags" optional="YES" attributeType="String"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="classes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BaseClass" inverseName="periods" inverseEntity="BaseClass"/>
+        <relationship name="rooms" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Room" inverseName="periods" inverseEntity="Room"/>
+        <relationship name="subjects" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Subject" inverseName="periods" inverseEntity="Subject"/>
+        <relationship name="teachers" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Teacher" inverseName="periods" inverseEntity="Teacher"/>
+    </entity>
+    <entity name="Room" representedClassName="Room" syncable="YES" codeGenerationType="class">
+        <attribute name="backColor" optional="YES" attributeType="String"/>
+        <attribute name="foreColor" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="longName" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="periods" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Period" inverseName="rooms" inverseEntity="Period"/>
+    </entity>
+    <entity name="Subject" representedClassName="Subject" syncable="YES" codeGenerationType="class">
+        <attribute name="backColor" optional="YES" attributeType="String"/>
+        <attribute name="foreColor" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="longName" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="periods" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Period" inverseName="subjects" inverseEntity="Period"/>
+    </entity>
+    <entity name="Teacher" representedClassName="Teacher" syncable="YES" codeGenerationType="class">
+        <attribute name="backColor" optional="YES" attributeType="String"/>
+        <attribute name="foreColor" optional="YES" attributeType="String"/>
+        <attribute name="foreName" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longName" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="periods" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Period" inverseName="teachers" inverseEntity="Period"/>
+    </entity>
+    <elements>
+        <element name="Period" positionX="59.3973388671875" positionY="247.8313293457031" width="128" height="238"/>
+        <element name="BaseClass" positionX="23.2857666015625" positionY="14.37777709960938" width="128" height="163"/>
+        <element name="Subject" positionX="63" positionY="234" width="128" height="119"/>
+        <element name="Teacher" positionX="81" positionY="261" width="128" height="134"/>
+        <element name="Room" positionX="90" positionY="279" width="128" height="119"/>
+    </elements>
+</model>
