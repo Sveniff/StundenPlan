@@ -6,51 +6,66 @@
 //
 
 import Foundation
+import SwiftUI
+
+func colFromStr(_ str: String) -> Color{
+    return Color(
+        red: Double("\(Array(str)[0])\(Array(str)[1])")!/100,
+        green: Double("\(Array(str)[2])\(Array(str)[3])")!/100,
+        blue: Double("\(Array(str)[4])\(Array(str)[5])")!/100)
+}
+
+extension Period{
+    public var subjects: [Subject]{
+        Array(subjectsNS as? Set<Subject> ?? [])
+    }
+    public var teachers: [Teacher]{
+        return Array(teachersNS as? Set<Teacher> ?? [])
+    }
+    public var classes: [BaseClass]{
+        return Array(classesNS as? Set<BaseClass> ?? [])
+    }
+    public var rooms: [Room]{
+        return Array(roomsNS as? Set<Room> ?? [])
+    }
+}
 
 class UserSettings: ObservableObject {
-    
     @Published var loggedIn: Bool {
         didSet {
             UserDefaults.standard.set(loggedIn, forKey: "loggedIn")
         }
     }
-    
     @Published var username: String {
         didSet {
             UserDefaults.standard.set(username, forKey: "username")
         }
     }
-    
     @Published var password: String {
         didSet {
             UserDefaults.standard.set(password, forKey: "password")
         }
     }
-    
     @Published var sessionId: String{
         didSet {
             UserDefaults.standard.set(sessionId, forKey: "sessionId")
         }
     }
-    
     @Published var personType: Int?{
         didSet {
             UserDefaults.standard.set(personType, forKey: "personType")
         }
     }
-    
     @Published var personId: Int?{
         didSet {
             UserDefaults.standard.set(personId, forKey: "personType")
         }
     }
-    
     @Published var klasseId: Int?{
         didSet {
             UserDefaults.standard.set(klasseId, forKey: "personType")
         }
     }
-    
     init() {
         self.username = UserDefaults.standard.object(forKey: "username") as? String ?? ""
         self.password = UserDefaults.standard.object(forKey: "password") as? String ?? ""
@@ -122,6 +137,7 @@ struct APIAuthResult: Decodable{
            }
        }
 }
+
 func auth(_ username: String, _ password: String) -> (Bool, APIAuthResult?){
     var result: APIAuthResult?
     var semaphore = DispatchSemaphore(value: 0)
@@ -155,6 +171,7 @@ struct APIResult: Decodable{
     var id: String
     var result: Data
 }
+
 func logOut(_ sessionId: String){
     var semaphore = DispatchSemaphore (value: 0)
 
@@ -187,6 +204,7 @@ struct APITeacherResult: Decodable{
     var id: String
     var result: [APITeacher]
 }
+
 struct APITeacher: Decodable{
     var id: Int
     var name: String
@@ -195,6 +213,7 @@ struct APITeacher: Decodable{
     var foreColor: String?
     var backColor: String?
 }
+
 func getTeachers(_ sessionId: String) -> (Bool, [APITeacher]?){
     var result: APITeacherResult?
     var teachers: [APITeacher]?
@@ -231,6 +250,7 @@ struct APIStudentResult: Decodable{
     var id: String
     var result: [APIStudent]
 }
+
 struct APIStudent: Decodable{
     var id: Int
     var key: String
@@ -239,6 +259,7 @@ struct APIStudent: Decodable{
     var longName: String?
     var gender: String?
 }
+
 func getStudents(_ sessionId: String) -> (Bool, [APIStudent]?){
     var result: APIStudentResult?
     var students: [APIStudent]?
@@ -275,6 +296,7 @@ struct APIBaseClassResult: Decodable{
     var id: String
     var result: [APIBaseClass]
 }
+
 struct APIBaseClass: Decodable{
     var id: Int
     var name: String
@@ -284,6 +306,7 @@ struct APIBaseClass: Decodable{
     var teacher1: Int?
     var teacher2: Int?
 }
+
 func getKlassen(_ sessionId: String) -> (Bool,[APIBaseClass]?){
     var result: APIBaseClassResult?
     var baseClasses: [APIBaseClass]?
@@ -320,6 +343,7 @@ struct APISubjectResult: Decodable{
     var id: String
     var result: [APISubject]
 }
+
 struct APISubject: Decodable{
     var id: Int
     var name: String
@@ -329,6 +353,7 @@ struct APISubject: Decodable{
     var foreColor: String?
     var backColor: String?
 }
+
 func getSubjects(_ sessionId: String) -> (Bool, [APISubject]?){
     var result: APISubjectResult?
     var subjects: [APISubject]?
@@ -365,6 +390,7 @@ struct APIRoomResult: Decodable{
     var id: String
     var result: [APIRoom]
 }
+
 struct APIRoom: Decodable{
     var id: Int
     var name: String
@@ -372,6 +398,7 @@ struct APIRoom: Decodable{
     var foreColor: String?
     var backColor: String?
 }
+
 func getRooms(_ sessionId: String) -> (Bool, [APIRoom]?){
     var result: APIRoomResult?
     var rooms: [APIRoom]?
@@ -409,6 +436,7 @@ struct APITimetableResult: Decodable{
     var id: String
     var result: [APIPeriod]
 }
+
 struct APIPeriod: Decodable{
     var id: Int
     var date: Int
@@ -424,15 +452,21 @@ struct APIPeriod: Decodable{
     var statflags: String?
     var activityType: String?
 }
+
 struct ID: Decodable{
     var id: Int
 }
+
 func getTimetable(id: Int, type: Int, _ sessionId: String) -> (Bool, [APIPeriod]?){
     var result: APITimetableResult?
     var periods: [APIPeriod]?
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "YYYYMMdd"
+    let timeFormatter = DateFormatter()
+    timeFormatter.dateFormat = "HHmm"
     let semaphore = DispatchSemaphore (value: 0)
 
-    let parameters = "{\"id\":\"0\",\"method\":\"getTimetable\",\"params\":{\"id\":\(id),\"type\":\(type)},\"jsonrpc\":\"2.0\"}"
+    let parameters = "{\"id\":\"0\",\"method\":\"getTimetable\",\"params\":{\"id\":\(id),\"type\":\(type),\"startDate\":\"\(dateFormatter.string(from: Date()))\",\"endDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: 7, to: Date())!))\"},\"jsonrpc\":\"2.0\"}"
     let postData = parameters.data(using: .utf8)
 
     var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)

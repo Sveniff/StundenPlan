@@ -23,6 +23,8 @@
 		1889566A24FD24D700BFE5CC /* login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1889566824FD24D700BFE5CC /* login.swift */; };
 		188DAAF524F6522200A1D93C /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188DAAF424F6522200A1D93C /* Data.swift */; };
 		188DAAF624F6522200A1D93C /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188DAAF424F6522200A1D93C /* Data.swift */; };
+		18A06061250FE3CB00FDFB16 /* PeriodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A06060250FE3CB00FDFB16 /* PeriodView.swift */; };
+		18A06062250FE3CB00FDFB16 /* PeriodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A06060250FE3CB00FDFB16 /* PeriodView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +63,7 @@
 		1849053C24F519B30048211D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1889566824FD24D700BFE5CC /* login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = login.swift; sourceTree = "<group>"; };
 		188DAAF424F6522200A1D93C /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
+		18A06060250FE3CB00FDFB16 /* PeriodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodView.swift; sourceTree = "<group>"; };
 		18E398F825013411003437F1 /* StundenPlanDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StundenPlanDebug.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -114,6 +117,7 @@
 			children = (
 				1849051324F519B30048211D /* StundenPlanApp.swift */,
 				1849051424F519B30048211D /* ContentView.swift */,
+				18A06060250FE3CB00FDFB16 /* PeriodView.swift */,
 				1889566824FD24D700BFE5CC /* login.swift */,
 				1849051524F519B30048211D /* Persistence.swift */,
 				188DAAF424F6522200A1D93C /* Data.swift */,
@@ -331,6 +335,7 @@
 				188DAAF524F6522200A1D93C /* Data.swift in Sources */,
 				1849054324F519B30048211D /* Persistence.swift in Sources */,
 				1849053D24F519B30048211D /* Stundenplan.xcdatamodeld in Sources */,
+				18A06061250FE3CB00FDFB16 /* PeriodView.swift in Sources */,
 				1849054124F519B30048211D /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -344,6 +349,7 @@
 				1889566A24FD24D700BFE5CC /* login.swift in Sources */,
 				188DAAF624F6522200A1D93C /* Data.swift in Sources */,
 				1849054424F519B30048211D /* Persistence.swift in Sources */,
+				18A06062250FE3CB00FDFB16 /* PeriodView.swift in Sources */,
 				1849054224F519B30048211D /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
