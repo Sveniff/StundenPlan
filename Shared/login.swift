@@ -5,6 +5,7 @@
 //  Created by Sven Iffland on 31.08.20.
 //
 
+import CoreData
 import SwiftUI
 
 struct login: View {
@@ -49,12 +50,7 @@ struct login: View {
                     Button(action: {
                         user.username = name
                         user.password = pass
-                        let authResult = auth(user.username, user.password)
-                        if authResult.0{
-                            user.sessionId = authResult.1!.result["sessionId"] as! String
-                            user.klasseId = authResult.1!.result["klasseId"] as? Int
-                            user.personId = authResult.1!.result["personId"] as? Int
-                            user.personType = authResult.1!.result["personType"] as? Int
+                        if user.auth().0{
                             wrongData = false
                             user.loggedIn = true
                         }

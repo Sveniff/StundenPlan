@@ -21,10 +21,15 @@
 		186AE5B325078BCA00EDDCBA /* Stundenplan.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1849051124F519B30048211D /* Stundenplan.xcdatamodeld */; };
 		1889566924FD24D700BFE5CC /* login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1889566824FD24D700BFE5CC /* login.swift */; };
 		1889566A24FD24D700BFE5CC /* login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1889566824FD24D700BFE5CC /* login.swift */; };
-		188DAAF524F6522200A1D93C /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188DAAF424F6522200A1D93C /* Data.swift */; };
-		188DAAF624F6522200A1D93C /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188DAAF424F6522200A1D93C /* Data.swift */; };
-		18A06061250FE3CB00FDFB16 /* PeriodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A06060250FE3CB00FDFB16 /* PeriodView.swift */; };
-		18A06062250FE3CB00FDFB16 /* PeriodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A06060250FE3CB00FDFB16 /* PeriodView.swift */; };
+		188A31E0252471860048606F /* DashboardMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188A31DF252471860048606F /* DashboardMobile.swift */; };
+		188DAAF524F6522200A1D93C /* Backend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188DAAF424F6522200A1D93C /* Backend.swift */; };
+		188DAAF624F6522200A1D93C /* Backend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188DAAF424F6522200A1D93C /* Backend.swift */; };
+		18D217EE252C53DE00A3EF01 /* TimetableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D217ED252C53DE00A3EF01 /* TimetableView.swift */; };
+		18D217EF252C53DE00A3EF01 /* TimetableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D217ED252C53DE00A3EF01 /* TimetableView.swift */; };
+		18D217F9252C64CF00A3EF01 /* UIextensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D217F8252C64CF00A3EF01 /* UIextensions.swift */; };
+		18D217FA252C64CF00A3EF01 /* UIextensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D217F8252C64CF00A3EF01 /* UIextensions.swift */; };
+		18DCAE7A252E0C45006240BA /* Preview Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DCAE79252E0C45006240BA /* Preview Data.swift */; };
+		18DCAE7B252E0C45006240BA /* Preview Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DCAE79252E0C45006240BA /* Preview Data.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,8 +67,11 @@
 		1849053A24F519B30048211D /* Tests_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOS.swift; sourceTree = "<group>"; };
 		1849053C24F519B30048211D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1889566824FD24D700BFE5CC /* login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = login.swift; sourceTree = "<group>"; };
-		188DAAF424F6522200A1D93C /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
-		18A06060250FE3CB00FDFB16 /* PeriodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodView.swift; sourceTree = "<group>"; };
+		188A31DF252471860048606F /* DashboardMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardMobile.swift; sourceTree = "<group>"; };
+		188DAAF424F6522200A1D93C /* Backend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backend.swift; sourceTree = "<group>"; };
+		18D217ED252C53DE00A3EF01 /* TimetableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimetableView.swift; sourceTree = "<group>"; };
+		18D217F8252C64CF00A3EF01 /* UIextensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIextensions.swift; sourceTree = "<group>"; };
+		18DCAE79252E0C45006240BA /* Preview Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preview Data.swift"; sourceTree = "<group>"; };
 		18E398F825013411003437F1 /* StundenPlanDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StundenPlanDebug.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -116,11 +124,13 @@
 			isa = PBXGroup;
 			children = (
 				1849051324F519B30048211D /* StundenPlanApp.swift */,
+				18DCAE79252E0C45006240BA /* Preview Data.swift */,
 				1849051424F519B30048211D /* ContentView.swift */,
-				18A06060250FE3CB00FDFB16 /* PeriodView.swift */,
 				1889566824FD24D700BFE5CC /* login.swift */,
+				18D217ED252C53DE00A3EF01 /* TimetableView.swift */,
 				1849051524F519B30048211D /* Persistence.swift */,
-				188DAAF424F6522200A1D93C /* Data.swift */,
+				188DAAF424F6522200A1D93C /* Backend.swift */,
+				18D217F8252C64CF00A3EF01 /* UIextensions.swift */,
 				1849051624F519B30048211D /* Assets.xcassets */,
 				1849051124F519B30048211D /* Stundenplan.xcdatamodeld */,
 			);
@@ -142,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				1849051E24F519B30048211D /* Info.plist */,
+				188A31DF252471860048606F /* DashboardMobile.swift */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -330,13 +341,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18D217EE252C53DE00A3EF01 /* TimetableView.swift in Sources */,
 				1849053F24F519B30048211D /* StundenPlanApp.swift in Sources */,
 				1889566924FD24D700BFE5CC /* login.swift in Sources */,
-				188DAAF524F6522200A1D93C /* Data.swift in Sources */,
+				188DAAF524F6522200A1D93C /* Backend.swift in Sources */,
 				1849054324F519B30048211D /* Persistence.swift in Sources */,
 				1849053D24F519B30048211D /* Stundenplan.xcdatamodeld in Sources */,
-				18A06061250FE3CB00FDFB16 /* PeriodView.swift in Sources */,
+				188A31E0252471860048606F /* DashboardMobile.swift in Sources */,
+				18D217F9252C64CF00A3EF01 /* UIextensions.swift in Sources */,
 				1849054124F519B30048211D /* ContentView.swift in Sources */,
+				18DCAE7A252E0C45006240BA /* Preview Data.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,12 +358,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18DCAE7B252E0C45006240BA /* Preview Data.swift in Sources */,
 				186AE5B325078BCA00EDDCBA /* Stundenplan.xcdatamodeld in Sources */,
+				18D217EF252C53DE00A3EF01 /* TimetableView.swift in Sources */,
 				1849054024F519B30048211D /* StundenPlanApp.swift in Sources */,
+				18D217FA252C64CF00A3EF01 /* UIextensions.swift in Sources */,
 				1889566A24FD24D700BFE5CC /* login.swift in Sources */,
-				188DAAF624F6522200A1D93C /* Data.swift in Sources */,
+				188DAAF624F6522200A1D93C /* Backend.swift in Sources */,
 				1849054424F519B30048211D /* Persistence.swift in Sources */,
-				18A06062250FE3CB00FDFB16 /* PeriodView.swift in Sources */,
 				1849054224F519B30048211D /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

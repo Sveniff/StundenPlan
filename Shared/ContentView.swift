@@ -1,8 +1,8 @@
 //
-//  ContentView.swift
-//  Shared
+//ContentView.swift
+//Shared
 //
-//  Created by Sven Iffland on 25.08.20.
+//Created by Sven Iffland on 25.08.20.
 //
 
 import SwiftUI
@@ -21,16 +21,17 @@ struct ContentView: View {
     var storedPeriods: FetchedResults<Period>
     @FetchRequest(entity: Room.entity(), sortDescriptors: [])
     var storedRooms: FetchedResults<Room>
+    @FetchRequest(entity: GridElement.entity(), sortDescriptors: [])
+    var storedGrid: FetchedResults<GridElement>
+    @FetchRequest(entity: Day.entity(), sortDescriptors: [])
+    var storedays: FetchedResults<Day>
     var body: some View {
-        List{
-            ForEach(storedPeriods, id: \.self){
-                period in
-                ForEach(period.subjects, id: \.self){
-                    su in
-                    Text(su.longName ?? "")
-                }
-            }
+        VStack{
+            #if os(iOS)
+                DashboardMobile()
+            #endif
         }
+//MARK:API REQUESTS
         .onAppear{
             if user.sessionId != ""{
                 var teachers: [APITeacher] = []
@@ -38,11 +39,13 @@ struct ContentView: View {
                 var baseClasses: [APIBaseClass] = []
                 var periods: [APIPeriod] = []
                 var rooms: [APIRoom] = []
-                teachers = getTeachers(user.sessionId).1!
-                subjects = getSubjects(user.sessionId).1!
-                baseClasses = getKlassen(user.sessionId).1!
-                rooms = getRooms(user.sessionId).1!
-                periods = getTimetable(id: user.personId!, type: user.personType!, user.sessionId).1!
+                var grid: [APIGridElement] = []
+                teachers = user.getTeachers().1!
+                subjects = user.getSubjects().1!
+                baseClasses = user.getKlassen().1!
+                rooms = user.getRooms().1!
+                periods = user.getTimetable().1!
+                grid = user.getGrid().1!
                 for teacher in teachers{
                     if storedTeachers.contains(where: {te in te.id == teacher.id}){
                         viewContext.delete(storedTeachers.filter{$0.id == teacher.id}[0])
@@ -96,6 +99,27 @@ struct ContentView: View {
                     newRoom.name = room.name
                 }
                 try? viewContext.save()
+                for day in 1...7{
+                    if storedays.contains(where: {da in da.number == day}){
+                        viewContext.delete(storedays.filter({$0.number == day})[0])
+                    }
+                    let newDay = Day(context: viewContext)
+                    newDay.number = Int16(day)
+                }
+                if !grid.isEmpty{
+                    for element in storedGrid{
+                        viewContext.delete(element)
+                    }
+                    for element in grid{
+                        for element in element.timeUnits{
+                            let newElement = GridElement(context: viewContext)
+                            newElement.startTime = String(element.startTime)
+                            newElement.endTime = String(element.endTime)
+                            newElement.name = element.name
+                            newElement.day = 
+                        }
+                    }
+                }
                 for period in periods{
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "YYYYMMdd"
@@ -109,8 +133,8 @@ struct ContentView: View {
                     newPeriod.code = period.code
                     newPeriod.id = Int64(period.id)
                     newPeriod.date = dateFormatter.date(from: String(period.date))
-                    newPeriod.endTime = timeFormatter.date(from: String(period.endTime))
-                    newPeriod.startTime = timeFormatter.date(from: String(period.startTime))
+                    newPeriod.endTime = String(period.endTime)
+                    newPeriod.startTime = String(period.startTime)
                     newPeriod.statflags = period.statflags
                     newPeriod.text = period.lstext
                     newPeriod.type = period.lstype
@@ -121,6 +145,7 @@ struct ContentView: View {
                 }
             }
             try? viewContext.save()
+            user.endSession()
         }
     }
 }
@@ -128,8 +153,14 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let user = UserSettings()
+        let context = PersistenceController.preview.container.viewContext
+        let te = Teacher(context: context)
+        let su = Subject(context: context)
+        let bc = BaseClass(context: context)
+        let pe = Period(context: context)
+        let ro = Room(context: context)
         return ContentView()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .environment(\.managedObjectContext, context)
             .environmentObject(user)
     }
 }

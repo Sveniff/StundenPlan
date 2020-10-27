@@ -49,3 +49,18 @@ struct PersistenceController {
         })
     }
 }
+
+extension Period{
+    public var subjects: [Subject]{
+        Array(subjectsNS as? Set<Subject> ?? [])
+    }
+    public var teachers: [Teacher]{
+        return Array(teachersNS as? Set<Teacher> ?? [])
+    }
+    public var classes: [BaseClass]{
+        return Array(classesNS as? Set<BaseClass> ?? [])
+    }
+    public var rooms: [Room]{
+        return Array(roomsNS as? Set<Room> ?? [])
+    }
+}

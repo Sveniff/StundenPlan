@@ -5,6 +5,7 @@
 //  Created by Sven Iffland on 25.08.20.
 //
 
+import CoreData
 import SwiftUI
 
 @main
@@ -13,22 +14,7 @@ struct StundenPlanApp: App {
     @ObservedObject var user = UserSettings()
     var authResult: (Bool, APIAuthResult?) = (false, nil)
     init() {
-        if user.username != "" && user.password != "" {
-            authResult = auth(user.username, user.password)
-            if authResult.0{
-                user.sessionId = authResult.1!.result["sessionId"] as! String
-                user.klasseId = authResult.1!.result["klasseId"] as? Int
-                user.personId = authResult.1!.result["personId"] as? Int
-                user.personType = authResult.1!.result["personType"] as? Int
-                user.loggedIn = true
-            }
-            else{
-                user.loggedIn = false
-            }
-        }
-        else{
-            user.loggedIn = false
-        }
+        user.auth()
     }
     
     var body: some Scene {
