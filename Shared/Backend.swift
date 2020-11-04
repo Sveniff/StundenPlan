@@ -277,7 +277,7 @@ class UserSettings: ObservableObject {
         timeFormatter.dateFormat = "HHmm"
         let semaphore = DispatchSemaphore (value: 0)
 
-        let parameters = "{\"id\":\"0\",\"method\":\"getTimetable\",\"params\":{\"id\":\(personId!),\"type\":\( personType!),\"startDate\":\"\(dateFormatter.string(from: Date()))\",\"endDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: 7, to: Date())!))\"},\"jsonrpc\":\"2.0\"}"
+        let parameters = "{\"id\":\"0\",\"method\":\"getTimetable\",\"params\":{\"id\":\(personId!),\"type\":\( personType!),\"startDate\":\"\(dateFormatter.string(from: Date()))\",\"endDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: 6, to: Date())!))\"},\"jsonrpc\":\"2.0\"}"
         let postData = parameters.data(using: .utf8)
 
         var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
@@ -521,3 +521,15 @@ struct APITimeStamp: Decodable{
     var startTime: Int
     var endTime: Int
 }
+
+
+func minutesBetweenDates(_ oldDate: Date, _ newDate: Date) -> CGFloat {
+
+    //get both times sinces refrenced date and divide by 60 to get minutes
+    let newDateMinutes = newDate.timeIntervalSinceReferenceDate/60
+    let oldDateMinutes = oldDate.timeIntervalSinceReferenceDate/60
+
+    //then return the difference
+    return CGFloat(newDateMinutes - oldDateMinutes)
+}
+

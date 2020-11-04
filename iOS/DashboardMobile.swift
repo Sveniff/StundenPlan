@@ -10,7 +10,7 @@ import SwiftUI
 struct DashboardMobile: View {
     @State var selection: Int = 1
     @State var scrollOffset: CGFloat = 0.0
-    @State var offset: CGFloat = 0.15
+    @State var offset: CGFloat = 1.6
     @State var sliderOffset:CGFloat = 0.0
     var body: some View {
         ZStack{
@@ -43,7 +43,7 @@ struct DashboardMobile: View {
                                     .foregroundColor(Color.secondary)
                                     .shadow(radius: 5)
                                     .frame(width: UIScreen.main.bounds.width, height: 75)
-                                ScrollView{
+                                VStack{
                                     Spacer()
                                         .frame(height: 10)
                                     HStack{
@@ -69,11 +69,11 @@ struct DashboardMobile: View {
                             DragGesture()
                                 .onEnded({
                                     value in
-                                    if value.translation.height > -50{
+                                    if value.translation.height > -150{
                                         offset = 1.6
                                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                     }
-                                    else if value.translation.height < 50{
+                                    else if value.translation.height < 100{
                                         offset = 0.15
                                         UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
                                     }
@@ -85,7 +85,7 @@ struct DashboardMobile: View {
                                 })
                         )
                         .offset(y: scrollOffset)
-                        .animation(.spring(response: 0.2, dampingFraction: 1, blendDuration: 0.1))
+                        .animation(.spring(response: 0.2, dampingFraction: 1, blendDuration: 0.4))
                 }
                 .zIndex(2)
                 .transition(.move(edge: .bottom))

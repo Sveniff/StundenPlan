@@ -98,7 +98,6 @@ struct ContentView: View {
                     newRoom.longName = room.longName
                     newRoom.name = room.name
                 }
-                try? viewContext.save()
                 for day in 1...7{
                     if storedays.contains(where: {da in da.number == day}){
                         viewContext.delete(storedays.filter({$0.number == day})[0])
@@ -106,35 +105,43 @@ struct ContentView: View {
                     let newDay = Day(context: viewContext)
                     newDay.number = Int16(day)
                 }
+                try? viewContext.save()
                 if !grid.isEmpty{
                     for element in storedGrid{
                         viewContext.delete(element)
                     }
-                    for element in grid{
-                        for element in element.timeUnits{
+                    for grid in grid{
+                        for element in grid.timeUnits{
                             let newElement = GridElement(context: viewContext)
                             newElement.startTime = String(element.startTime)
+                            newElement.startTime!.insert(contentsOf: ":", at: newElement.startTime!.index(newElement.startTime!.endIndex, offsetBy: -2))
                             newElement.endTime = String(element.endTime)
+                            newElement.endTime!.insert(contentsOf: ":", at: newElement.endTime!.index(newElement.endTime!.endIndex, offsetBy: -2))
                             newElement.name = element.name
-                            newElement.day = 
+                            newElement.day = storedays.filter({day in day.number == grid.day})[0]
                         }
+                    }
+                }
+                for period in storedPeriods{
+                    if period.date! < Date(){
+                        viewContext.delete(period)
                     }
                 }
                 for period in periods{
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "YYYYMMdd"
-                    let timeFormatter = DateFormatter()
-                    timeFormatter.dateFormat = "HHmm"
                     if storedPeriods.contains(where: {pe in pe.id == period.id}){
                         viewContext.delete(storedPeriods.filter{$0.id == period.id}[0])
                     }
-                    let newPeriod = Period(context: viewContext)
+                    var newPeriod = Period(context: viewContext)
                     newPeriod.activityType = period.activityType
                     newPeriod.code = period.code
                     newPeriod.id = Int64(period.id)
                     newPeriod.date = dateFormatter.date(from: String(period.date))
                     newPeriod.endTime = String(period.endTime)
+                    newPeriod.endTime!.insert(contentsOf: ":", at: newPeriod.endTime!.index(newPeriod.endTime!.endIndex, offsetBy: -2))
                     newPeriod.startTime = String(period.startTime)
+                    newPeriod.startTime!.insert(contentsOf: ":", at: newPeriod.startTime!.index(newPeriod.startTime!.endIndex, offsetBy: -2))
                     newPeriod.statflags = period.statflags
                     newPeriod.text = period.lstext
                     newPeriod.type = period.lstype

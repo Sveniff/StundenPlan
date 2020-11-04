@@ -12,13 +12,13 @@
     </entity>
     <entity name="Day" representedClassName="Day" syncable="YES" codeGenerationType="class">
         <attribute name="number" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="elements" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GridElement" inverseName="day" inverseEntity="GridElement"/>
+        <relationship name="elementsNS" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GridElement" inverseName="day" inverseEntity="GridElement"/>
     </entity>
     <entity name="GridElement" representedClassName="GridElement" syncable="YES" codeGenerationType="class">
         <attribute name="endTime" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="startTime" optional="YES" attributeType="String"/>
-        <relationship name="day" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Day" inverseName="elements" inverseEntity="Day"/>
+        <relationship name="day" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Day" inverseName="elementsNS" inverseEntity="Day"/>
     </entity>
     <entity name="Period" representedClassName="Period" syncable="YES" codeGenerationType="class">
         <attribute name="activityType" optional="YES" attributeType="String"/>

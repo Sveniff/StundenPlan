@@ -64,3 +64,9 @@ extension Period{
         return Array(roomsNS as? Set<Room> ?? [])
     }
 }
+
+extension Day{
+    public var elements: [GridElement]{
+        Array(elementsNS as? Set<GridElement> ?? [])
+    }
+}

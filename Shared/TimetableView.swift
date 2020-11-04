@@ -21,108 +21,113 @@ struct TimetableView: View {
     var storedRooms: FetchedResults<Room>
     @FetchRequest(entity: GridElement.entity(), sortDescriptors: [])
     var storedGrid: FetchedResults<GridElement>
-    @State var sortedPeriods: [Period] = []
-    @State var sortedGrid: [GridElement] = []
+    @FetchRequest(entity: Day.entity(), sortDescriptors: [])
+    var storedDays: FetchedResults<Day>
+    let TF = DateFormatter()
+    var calendar = Calendar(identifier: Calendar.Identifier.gregorian)
+    @State var selfIndexSideBar = 0
+    init(){
+        TF.dateFormat = "H:mm"
+        calendar.firstWeekday = 2
+        self.calendar.locale = Locale(identifier: "de_DE")
+    }
+    
     var body: some View {
         HStack{
-            ForEach(Range(1...6)){ day in
-                
+            VStack{
+                Spacer()
+                    .frame(height: 70)
+                let days = storedDays[2].elements.sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}
+                ForEach(days){ grid in
+                    let height = minutesBetweenDates(TF.date(from: grid.startTime!)!, TF.date(from: grid.endTime!)!)
+                    
+                    let space = minutesBetweenDates(TF.date(from: grid.endTime!)!, TF.date(from: (try? days[selfIndexSideBar+1].startTime!) ?? grid.endTime!)!)
+                    VStack{
+                        HStack{
+                            VStack{
+                                Divider()
+                                Spacer()
+                                Divider()
+                            }
+                            .frame(width: UIScreen.main.bounds.width*0.03)
+                            VStack{
+                                Text(grid.startTime ?? "")
+                                Spacer()
+                                Text(grid.endTime ?? "")
+                            }
+                            .frame(width: UIScreen.main.bounds.width*0.07)
+                            VStack{
+                                Divider()
+                                Spacer()
+                                Divider()
+                            }
+                            .frame(width: UIScreen.main.bounds.width*0.03)
+                        }
+                        .frame(width: UIScreen.main.bounds.width*0.13, height: CGFloat(height))
+                        Spacer()
+                            .frame(height:space)
+                    }
+                    .font(.system(size: 10, weight: .regular, design: .rounded))
+                    .onAppear{
+                        selfIndexSideBar += 1
+                    }
+                }
+                .fixedSize()
+                Spacer()
             }
-//            Spacer()
-//            ForEach(Range(2...6)){ i in
-//                HStack{
-//                    Divider()
-//                    VStack{
-//                        Spacer()
-//                            .frame(height: UIScreen.main.bounds.height/10)
-//                        let periods = storedPeriods.filter({Calendar.current.component(.weekday, from: $0.date!) == i}).sorted{
-//                            Int($0.startTime!)! < Int($1.startTime!)!
-//                        }
-//                        ForEach(periods){ period in
-//                            if !period.subjects.isEmpty{
-//                                VStack{
-//                                    Text(period.subjects[0].name ?? "")
-//                                        .font(.system(size: 15, weight: .semibold, design: .rounded))
-//                                    Text(period.rooms[0].name ?? "")
-//                                        .font(.system(size: 13, weight: .light, design: .default))
-//                                }
-//                                .foregroundColor(hexStringToUIColor(hex: period.subjects[0].foreColor!))
-//                                .frame(height: 20)
-//                                .multilineTextAlignment(.center)
-//                                .frame(width: UIScreen.main.bounds.width*0.17, height: 45)
-//                                .background(
-//                                    RoundedRectangle(cornerRadius: 5)
-//                                        .foregroundColor(hexStringToUIColor(hex: period.subjects[0].backColor!))
-//                                )
-//                                .padding(.vertical, 1)
-//
-//                            }
-//                        }
-//                        Spacer()
-//                    }
-//                    Divider()
-//                }
-//                .frame(width: UIScreen.main.bounds.width*0.175)
-//            }
-//            Spacer()
-//            VStack{
-//                Group{
-//                    Text("07:50")
-//                    Text("08:35")
-//                    Text("08:40")
-//                    Text("09:25")
-//                }
-//                Group{
-//                    Text("09:45")
-//                    Text("10:30")
-//                    Text("10:35")
-//                    Text("11:20")
-//                }
-//                Group{
-//                    Text("11:40")
-//                    Text("12:25")
-//                    Text("12:30")
-//                    Text("13:15")
-//                }
-//                Group{
-//                    Text("13:25")
-//                    Text("14:10")
-//                }
-//                Group{
-//                    Text("14:15")
-//                    Text("15:00")
-//                    Text("15:05")
-//                    Text("15:50")
-//                }
-//                Group{
-//                    Text("15:55")
-//                    Text("16:40")
-//                    Text("16:40")
-//                    Text("17:25")
-//                }
-//                Group{
-//                    Text("17:25")
-//                    Text("18:00")
-//                }
-//            }
-//            .foregroundColor(.secondary)
-//            .font(.system(size: 13, weight: .semibold, design: .rounded))
-//            Divider()
-        }
-        .onAppear{
-            sortedGrid = storedGrid.sorted(by:{
-                var re = false
-                if $0.day != $1.day{
-                    re = $0.day!.number > $0.day!.number
+            ForEach(storedDays.filter({!$0.elements.isEmpty}).sorted{$0.number < $1.number}){ day in
+                HStack{
+                    Divider()
+                    VStack{
+                        Spacer().frame(height:40)
+                        Text(calendar.shortWeekdaySymbols[Int(day.number)-1])
+                            .frame(height:30)
+                            .font(.system(size: 23, weight: .semibold, design: .rounded))
+                        ForEach(day.elements.sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}){ grid in
+                            
+                            let periods = storedPeriods.filter({
+                                let day = calendar.component(.weekday, from: $0.date!) == day.number
+                                let start = Int16(grid.startTime!.replacingOccurrences(of: ":", with: ""))!...(Int16(grid.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16($0.startTime!.replacingOccurrences(of: ":", with: ""))!
+                                let end = Int16(grid.startTime!.replacingOccurrences(of: ":", with: ""))!...(Int16(grid.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16($0.endTime!.replacingOccurrences(of: ":", with: ""))!
+                                let startsBeforeEnd = Int16($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int16($0.endTime!.replacingOccurrences(of: ":", with: ""))!
+                                return start && end && startsBeforeEnd && day
+                            })
+                            let height = minutesBetweenDates(TF.date(from: grid.startTime!)!, TF.date(from: grid.endTime!)!)
+                            HStack{
+                                if !periods.isEmpty{
+                                    ForEach(periods){ period in
+
+                                        if !period.subjects.isEmpty{
+                                            VStack{
+                                                Text(period.subjects[0].name ?? "")
+                                                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                                                Text(period.rooms[0].name ?? "")
+                                                    .font(.system(size: 13, weight: .regular, design: .rounded))
+                                            }
+                                            .foregroundColor(hexStringToUIColor(hex: period.subjects[0].foreColor!))
+                                            .frame(width: UIScreen.main.bounds.width*0.16, height: CGFloat(height))
+                                            .multilineTextAlignment(.center)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 3)
+                                                    .foregroundColor(hexStringToUIColor(hex: period.subjects[0].backColor!))
+                                            )
+                                        }
+
+                                    }
+                                }
+                                else{
+                                    Spacer()
+                                        .frame(width: UIScreen.main.bounds.width*0.16, height: CGFloat(height))
+                                }
+                            }
+                            .frame(width: UIScreen.main.bounds.width*0.165, height: CGFloat(height))
+                            Spacer()
+                                .frame(height:5)
+                        }
+                        Spacer()
+                    }
                 }
-                else if Int($0.startTime!)! != Int($0.startTime!)!{
-                    re = Int($0.startTime!)! > Int($0.startTime!)!
-                }
-                else{
-                    re = Int($0.name!)! < Int($1.name!)!
-                }
-                return re
-            })
+            }
         }
     }
 }
@@ -133,3 +138,6 @@ struct TimetableView_Previews: PreviewProvider {
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
+
+
+
