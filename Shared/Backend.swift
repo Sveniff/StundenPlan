@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 class UserSettings: ObservableObject {
     @Published var loggedIn: Bool {
@@ -74,9 +75,9 @@ class UserSettings: ObservableObject {
         }
         if result != nil{
             sessionId = result!.result["sessionId"] as! String
-            klasseId = result!.result["klasseId"] as? Int
-            personId = result!.result["personId"] as? Int
-            personType = result!.result["personType"] as? Int
+            klasseId = result!.result["klasseId"] as! Int
+            personId = result!.result["personId"] as! Int
+            personType = result!.result["personType"] as! Int
             loggedIn = true
         }
         else {
@@ -91,7 +92,7 @@ class UserSettings: ObservableObject {
         let parameters = "{\"id\":\"0\",\"method\":\"logout\",\"params\":{},\"jsonrpc\":\"2.0\"}"
         let postData = parameters.data(using: .utf8)
 
-        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
+        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: 10)
         request.addValue("\(sessionId)", forHTTPHeaderField: "JSSESSIONID")
         request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
         request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId)", forHTTPHeaderField: "Cookie")

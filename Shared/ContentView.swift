@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import Combine
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -98,6 +99,7 @@ struct ContentView: View {
                     newRoom.longName = room.longName
                     newRoom.name = room.name
                 }
+                try? viewContext.save()
                 for day in 1...7{
                     if storedays.contains(where: {da in da.number == day}){
                         viewContext.delete(storedays.filter({$0.number == day})[0])
@@ -120,11 +122,6 @@ struct ContentView: View {
                             newElement.name = element.name
                             newElement.day = storedays.filter({day in day.number == grid.day})[0]
                         }
-                    }
-                }
-                for period in storedPeriods{
-                    if period.date! < Date(){
-                        viewContext.delete(period)
                     }
                 }
                 for period in periods{

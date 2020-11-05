@@ -7,19 +7,19 @@
 
 import CoreData
 import SwiftUI
+import Combine
 
 @main
 struct StundenPlanApp: App {
     let persistenceController = PersistenceController.shared
     @ObservedObject var user = UserSettings()
-    var authResult: (Bool, APIAuthResult?) = (false, nil)
     init() {
         user.auth()
     }
     
     var body: some Scene {
         WindowGroup {
-            if user.loggedIn{
+            if user.password != "" && user.username != ""{
                 ContentView()
                     .environmentObject(user)
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)

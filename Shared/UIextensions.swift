@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 extension Color {
     static let primaryInvert = Color("Invert")

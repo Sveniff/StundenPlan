@@ -6,6 +6,7 @@
 //
 import CoreData
 import SwiftUI
+import Combine
 
 struct TimetableView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -23,9 +24,9 @@ struct TimetableView: View {
     var storedGrid: FetchedResults<GridElement>
     @FetchRequest(entity: Day.entity(), sortDescriptors: [])
     var storedDays: FetchedResults<Day>
+    
     let TF = DateFormatter()
     var calendar = Calendar(identifier: Calendar.Identifier.gregorian)
-    @State var selfIndexSideBar = 0
     init(){
         TF.dateFormat = "H:mm"
         calendar.firstWeekday = 2
@@ -36,98 +37,97 @@ struct TimetableView: View {
         HStack{
             VStack{
                 Spacer()
-                    .frame(height: 70)
-                let days = storedDays[2].elements.sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}
-                ForEach(days){ grid in
-                    let height = minutesBetweenDates(TF.date(from: grid.startTime!)!, TF.date(from: grid.endTime!)!)
-                    
-                    let space = minutesBetweenDates(TF.date(from: grid.endTime!)!, TF.date(from: (try? days[selfIndexSideBar+1].startTime!) ?? grid.endTime!)!)
-                    VStack{
-                        HStack{
-                            VStack{
-                                Divider()
-                                Spacer()
-                                Divider()
-                            }
-                            .frame(width: UIScreen.main.bounds.width*0.03)
+                    .frame(height: 60)
+                let days = storedDays.isEmpty ? nil : storedDays[2].elements.sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}
+                if days != nil{
+                    ForEach(days!){ grid in
+                        let height = minutesBetweenDates(TF.date(from: grid.startTime!)!, TF.date(from: grid.endTime!)!)
+                        let space = minutesBetweenDates(TF.date(from: grid.endTime!)!, TF.date(from: days![days!.firstIndex(of: grid)! < days!.count - 1 ? days!.firstIndex(of: grid)! + 1 : days!.count - 1].startTime!)!)
+                        VStack{
                             VStack{
                                 Text(grid.startTime ?? "")
-                                Spacer()
+                                Text(grid.name ?? "")
+                                    .font(.system(size: 18, weight: .regular, design: .rounded))
                                 Text(grid.endTime ?? "")
                             }
-                            .frame(width: UIScreen.main.bounds.width*0.07)
-                            VStack{
-                                Divider()
-                                Spacer()
-                                Divider()
-                            }
-                            .frame(width: UIScreen.main.bounds.width*0.03)
+                            .frame(width: UIScreen.main.bounds.width*0.13, height: CGFloat(height))
+                            .background(
+                                Rectangle()
+                                    .foregroundColor(Color.secondary.opacity(0.1))
+                                    .frame(width: UIScreen.main.bounds.width*0.1, height: CGFloat(height))
+                            )
+                            Spacer()
+                                .frame(height: CGFloat(abs(space)+1))
                         }
-                        .frame(width: UIScreen.main.bounds.width*0.13, height: CGFloat(height))
-                        Spacer()
-                            .frame(height:space)
-                    }
-                    .font(.system(size: 10, weight: .regular, design: .rounded))
-                    .onAppear{
-                        selfIndexSideBar += 1
+                        .font(.system(size: 8, weight: .regular, design: .rounded))
                     }
                 }
-                .fixedSize()
                 Spacer()
             }
-            ForEach(storedDays.filter({!$0.elements.isEmpty}).sorted{$0.number < $1.number}){ day in
-                HStack{
-                    Divider()
-                    VStack{
-                        Spacer().frame(height:40)
-                        Text(calendar.shortWeekdaySymbols[Int(day.number)-1])
-                            .frame(height:30)
-                            .font(.system(size: 23, weight: .semibold, design: .rounded))
-                        ForEach(day.elements.sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}){ grid in
-                            
-                            let periods = storedPeriods.filter({
-                                let day = calendar.component(.weekday, from: $0.date!) == day.number
-                                let start = Int16(grid.startTime!.replacingOccurrences(of: ":", with: ""))!...(Int16(grid.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16($0.startTime!.replacingOccurrences(of: ":", with: ""))!
-                                let end = Int16(grid.startTime!.replacingOccurrences(of: ":", with: ""))!...(Int16(grid.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16($0.endTime!.replacingOccurrences(of: ":", with: ""))!
-                                let startsBeforeEnd = Int16($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int16($0.endTime!.replacingOccurrences(of: ":", with: ""))!
-                                return start && end && startsBeforeEnd && day
-                            })
-                            let height = minutesBetweenDates(TF.date(from: grid.startTime!)!, TF.date(from: grid.endTime!)!)
-                            HStack{
-                                if !periods.isEmpty{
-                                    ForEach(periods){ period in
-
-                                        if !period.subjects.isEmpty{
-                                            VStack{
-                                                Text(period.subjects[0].name ?? "")
-                                                    .font(.system(size: 14, weight: .regular, design: .rounded))
-                                                Text(period.rooms[0].name ?? "")
-                                                    .font(.system(size: 13, weight: .regular, design: .rounded))
-                                            }
-                                            .foregroundColor(hexStringToUIColor(hex: period.subjects[0].foreColor!))
-                                            .frame(width: UIScreen.main.bounds.width*0.16, height: CGFloat(height))
-                                            .multilineTextAlignment(.center)
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 3)
-                                                    .foregroundColor(hexStringToUIColor(hex: period.subjects[0].backColor!))
-                                            )
-                                        }
-
-                                    }
-                                }
-                                else{
-                                    Spacer()
-                                        .frame(width: UIScreen.main.bounds.width*0.16, height: CGFloat(height))
-                                }
-                            }
-                            .frame(width: UIScreen.main.bounds.width*0.165, height: CGFloat(height))
-                            Spacer()
-                                .frame(height:5)
-                        }
-                        Spacer()
-                    }
-                }
-            }
+//            ForEach(storedDays.filter({!$0.elements.isEmpty}).sorted{$0.number < $1.number}){ day in
+//                HStack{
+//                    Divider()
+//                    VStack{
+//                        Spacer().frame(height:70)
+//                        Text(calendar.shortWeekdaySymbols[Int(day.number)-1])
+//                            .frame(height:30)
+//                            .font(.system(size: 23, weight: .semibold, design: .rounded))
+//
+//
+//                        let days = day.elements.sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}
+//
+//
+//                        ForEach(day.elements.sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}){ grid in
+//
+//
+//                            let periods = storedPeriods.filter({
+//                                let day = calendar.component(.weekday, from: $0.date!) == day.number
+//                                let date = calendar.component(.weekOfYear, from: $0.date!) == calendar.component(.weekOfYear, from: Date())
+//                                let start = Int16(grid.startTime!.replacingOccurrences(of: ":", with: ""))!...(Int16(grid.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16($0.startTime!.replacingOccurrences(of: ":", with: ""))!
+//                                let end = Int16(grid.startTime!.replacingOccurrences(of: ":", with: ""))!...(Int16(grid.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16($0.endTime!.replacingOccurrences(of: ":", with: ""))!
+//                                let startsBeforeEnd = Int16($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int16($0.endTime!.replacingOccurrences(of: ":", with: ""))!
+//                                return start && end && startsBeforeEnd && day && date
+//                            })
+//
+//                            let height = minutesBetweenDates(TF.date(from: grid.startTime!)!, TF.date(from: grid.endTime!)!)
+//                            let space = minutesBetweenDates(TF.date(from: grid.endTime!)!, TF.date(from: days[days.firstIndex(of: grid)! < days.count - 1 ? days.firstIndex(of: grid)! + 1 : days.count - 1].startTime!)!)
+//
+//
+//                            VStack{
+//                                HStack{
+//                                    if !periods.isEmpty{
+//                                        ForEach(periods){ period in
+//                                            if !period.subjects.isEmpty{
+//                                                VStack{
+//                                                    Text(period.subjects[0].name ?? "")
+//                                                        .font(.system(size: 14, weight: .regular, design: .rounded))
+//                                                    Text(period.rooms[0].name ?? "")
+//                                                        .font(.system(size: 13, weight: .regular, design: .rounded))
+//                                                }
+//                                                .foregroundColor(hexStringToUIColor(hex: period.subjects[0].foreColor!))
+//                                                .multilineTextAlignment(.center)
+//                                                .frame(width: UIScreen.main.bounds.width*0.19, height: CGFloat(height))
+//                                                .background(
+//                                                    RoundedRectangle(cornerRadius: 3)
+//                                                        .foregroundColor(hexStringToUIColor(hex: period.subjects[0].backColor!))
+//                                                )
+//                                            }
+//                                        }
+//                                    }
+//                                    else{
+//                                        Spacer()
+//                                    }
+//                                }
+//                                Spacer()
+//                                    .frame(height: abs(space)+1)
+//                            }
+//                            .frame(width: UIScreen.main.bounds.width*0.19, height: CGFloat(height+abs(space)+1))
+//                            .fixedSize()
+//                        }
+//                        Spacer()
+//                    }
+//                }
+//            }
         }
     }
 }
