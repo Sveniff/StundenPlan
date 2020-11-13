@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		181A5FCC255BF01900E53C25 /* PeriodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181A5FCB255BF01900E53C25 /* PeriodView.swift */; };
+		181A5FCD255BF01900E53C25 /* PeriodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181A5FCB255BF01900E53C25 /* PeriodView.swift */; };
 		1849053024F519B30048211D /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1849052F24F519B30048211D /* Tests_iOS.swift */; };
 		1849053B24F519B30048211D /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1849053A24F519B30048211D /* Tests_macOS.swift */; };
 		1849053D24F519B30048211D /* Stundenplan.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1849051124F519B30048211D /* Stundenplan.xcdatamodeld */; };
@@ -50,6 +52,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		181A5FCB255BF01900E53C25 /* PeriodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodView.swift; sourceTree = "<group>"; };
 		1849051224F519B30048211D /* Stundenplan.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Stundenplan.xcdatamodel; sourceTree = "<group>"; };
 		1849051324F519B30048211D /* StundenPlanApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StundenPlanApp.swift; sourceTree = "<group>"; };
 		1849051424F519B30048211D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -128,6 +131,7 @@
 				1849051424F519B30048211D /* ContentView.swift */,
 				1889566824FD24D700BFE5CC /* login.swift */,
 				18D217ED252C53DE00A3EF01 /* TimetableView.swift */,
+				181A5FCB255BF01900E53C25 /* PeriodView.swift */,
 				1849051524F519B30048211D /* Persistence.swift */,
 				188DAAF424F6522200A1D93C /* Backend.swift */,
 				18D217F8252C64CF00A3EF01 /* UIextensions.swift */,
@@ -345,6 +349,7 @@
 				1849053F24F519B30048211D /* StundenPlanApp.swift in Sources */,
 				1889566924FD24D700BFE5CC /* login.swift in Sources */,
 				188DAAF524F6522200A1D93C /* Backend.swift in Sources */,
+				181A5FCC255BF01900E53C25 /* PeriodView.swift in Sources */,
 				1849054324F519B30048211D /* Persistence.swift in Sources */,
 				1849053D24F519B30048211D /* Stundenplan.xcdatamodeld in Sources */,
 				188A31E0252471860048606F /* DashboardMobile.swift in Sources */,
@@ -365,6 +370,7 @@
 				18D217FA252C64CF00A3EF01 /* UIextensions.swift in Sources */,
 				1889566A24FD24D700BFE5CC /* login.swift in Sources */,
 				188DAAF624F6522200A1D93C /* Backend.swift in Sources */,
+				181A5FCD255BF01900E53C25 /* PeriodView.swift in Sources */,
 				1849054424F519B30048211D /* Persistence.swift in Sources */,
 				1849054224F519B30048211D /* ContentView.swift in Sources */,
 			);

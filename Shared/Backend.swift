@@ -268,7 +268,7 @@ class UserSettings: ObservableObject {
         print("\n\n\n\n")
         return (rooms != nil, rooms)
     }
-
+    
     func getTimetable() -> (Bool, [APIPeriod]?){
         var result: APITimetableResult?
         var periods: [APIPeriod]?
@@ -278,7 +278,7 @@ class UserSettings: ObservableObject {
         timeFormatter.dateFormat = "HHmm"
         let semaphore = DispatchSemaphore (value: 0)
 
-        let parameters = "{\"id\":\"0\",\"method\":\"getTimetable\",\"params\":{\"id\":\(personId!),\"type\":\( personType!),\"startDate\":\"\(dateFormatter.string(from: Date()))\",\"endDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: 6, to: Date())!))\"},\"jsonrpc\":\"2.0\"}"
+        let parameters = "{\"id\":\"0\",\"method\":\"getTimetable\",\"params\":{\"options\":{\"element\": {\"id\":\(personId!),\"type\":\( personType!)},\"showInfo\":true,\"showLsText\":true,\"startDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: -6, to: Date())!))\",\"endDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: 6, to: Date())!))\"}},\"jsonrpc\":\"2.0\"}"
         let postData = parameters.data(using: .utf8)
 
         var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
@@ -335,7 +335,7 @@ class UserSettings: ObservableObject {
         semaphore.wait()
         return (gridElements != nil, gridElements)
     }
-
+    
     init() {
         self.username = UserDefaults.standard.object(forKey: "username") as? String ?? ""
         self.password = UserDefaults.standard.object(forKey: "password") as? String ?? ""
@@ -498,14 +498,13 @@ struct APIPeriod: Decodable{
     var te: [ID]?
     var su: [ID]?
     var ro: [ID]?
+    var info: String?
+    var subsText: String?
     var lstype: String?
     var code: String?
     var lstext: String?
     var statflags: String?
     var activityType: String?
-}
-struct ID: Decodable{
-    var id: Int
 }
 
 struct APIGridResult: Decodable{
@@ -522,6 +521,10 @@ struct APITimeStamp: Decodable{
     var startTime: Int
     var endTime: Int
 }
+struct ID: Decodable{
+    var id: Int
+    var orgid: Int?
+}
 
 
 func minutesBetweenDates(_ oldDate: Date, _ newDate: Date) -> CGFloat {
@@ -533,4 +536,3 @@ func minutesBetweenDates(_ oldDate: Date, _ newDate: Date) -> CGFloat {
     //then return the difference
     return CGFloat(newDateMinutes - oldDateMinutes)
 }
-

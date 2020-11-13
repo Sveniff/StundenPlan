@@ -10,6 +10,7 @@ import CoreData
 import Combine
 
 struct ContentView: View {
+    @State var orientation = UIDevice.current.orientation
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var user: UserSettings
     @FetchRequest(entity: Teacher.entity(), sortDescriptors: [])
@@ -26,12 +27,18 @@ struct ContentView: View {
     var storedGrid: FetchedResults<GridElement>
     @FetchRequest(entity: Day.entity(), sortDescriptors: [])
     var storedays: FetchedResults<Day>
+    let orientationChanged = NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
+            .makeConnectable()
+            .autoconnect()
     var body: some View {
         VStack{
             #if os(iOS)
                 DashboardMobile()
             #endif
         }
+        .onReceive(orientationChanged) { _ in
+                    self.orientation = UIDevice.current.orientation
+                }
 //MARK:API REQUESTS
         .onAppear{
             if user.sessionId != ""{
@@ -146,6 +153,17 @@ struct ContentView: View {
                     newPeriod.subjectsNS = NSSet.init(array: storedSubjects.filter({su in(period.su?.contains(where: {id in su.id == id.id}) ?? false)}))
                     newPeriod.teachersNS = NSSet.init(array: storedTeachers.filter({te in(period.te?.contains(where: {id in te.id == id.id}) ?? false)}))
                     newPeriod.roomsNS = NSSet.init(array: storedRooms.filter({ro in(period.ro?.contains(where: {id in ro.id == id.id}) ?? false)}))
+                }
+                try? viewContext.save()
+                for period in storedPeriods{
+                    var collides = 0
+                    for compareObj in storedPeriods.filter({$0.date == period.date}){
+                        let start = Int16(period.startTime!.replacingOccurrences(of: ":", with: ""))!+1..<(Int16(period.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16(compareObj.startTime!.replacingOccurrences(of: ":", with: ""))!
+                        let end = Int16(period.startTime!.replacingOccurrences(of: ":", with: ""))!+1..<(Int16(period.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16(compareObj.endTime!.replacingOccurrences(of: ":", with: ""))!
+                        let overlapsStart = Int16(compareObj.startTime!.replacingOccurrences(of: ":", with: ""))! < Int16(period.startTime!.replacingOccurrences(of: ":", with: ""))!
+                        let overlapsEnd = Int16(period.endTime!.replacingOccurrences(of: ":", with: ""))! < Int16(compareObj.endTime!.replacingOccurrences(of: ":", with: ""))!
+                        collides += start || end || (overlapsStart && overlapsEnd) ? 1 : 0
+                    }
                 }
             }
             try? viewContext.save()

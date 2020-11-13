@@ -139,7 +139,7 @@ struct DashboardMobile: View {
                                 if selection == 1 || selection == 2{
                                     Spacer()
                                 }
-                                RoundedRectangle(cornerRadius: 50)
+                                RoundedRectangle(cornerRadius: 20)
                                     .foregroundColor(Color.gray.opacity(0.5))
                                     .frame(width: UIScreen.main.bounds.width*0.28, height: UIScreen.main.bounds.height/20)
                                     .zIndex(0)
