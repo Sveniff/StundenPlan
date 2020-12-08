@@ -12,6 +12,11 @@ struct DashboardMobile: View {
     @State var scrollOffset: CGFloat = 0.0
     @State var offset: CGFloat = 0.15
     @State var sliderOffset:CGFloat = 0.0
+    @State var TTV = TimetableView()
+    let df = DateFormatter()
+    init() {
+        df.dateFormat = "H:mm"
+    }
     var body: some View {
         ZStack{
             if selection == 0{
@@ -22,7 +27,7 @@ struct DashboardMobile: View {
             }
             if selection == 1{
                 VStack{
-                    TimetableView()
+                    TTV
                 }
                     .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height, alignment: .center)
                     .fixedSize()
@@ -34,7 +39,7 @@ struct DashboardMobile: View {
                     LinearGradient(gradient: Gradient(colors: [.gradient_top, .gradient_bottom]), startPoint: .top, endPoint: .bottom)
                         .mask(RoundedRectangle(cornerRadius: 47).offset(x: 0, y: 0))
                         .frame(height: UIScreen.main.bounds.height*1)
-                        .background(Color(red: 0.18, green: 0.15, blue: 0.55).frame(height: UIScreen.main.bounds.height).offset(y: UIScreen.main.bounds.height))
+                        .background(Color(red: 0.18, green: 0.15, blue: 0.55).frame(height: UIScreen.main.bounds.height).offset(y: UIScreen.main.bounds.height*0.8))
                         .shadow(radius: 10)
                         .overlay(
                             VStack{
@@ -92,7 +97,7 @@ struct DashboardMobile: View {
                 .transition(.move(edge: .bottom))
             }
             if selection == 2{
-                Color.primaryInvert
+                Settingsview()
                     .transition(.opacity)
                     .edgesIgnoringSafeArea(.all)
                     .zIndex(0)
@@ -135,13 +140,13 @@ struct DashboardMobile: View {
                             .zIndex(1)
                             HStack{
                                 Spacer()
-                                    .frame(width: UIScreen.main.bounds.width/48)
+                                    .frame(width: UIScreen.main.bounds.width/40)
                                 if selection == 1 || selection == 2{
                                     Spacer()
                                 }
                                 RoundedRectangle(cornerRadius: 20)
                                     .foregroundColor(Color.gray.opacity(0.5))
-                                    .frame(width: UIScreen.main.bounds.width*0.28, height: UIScreen.main.bounds.height/20)
+                                    .frame(width: UIScreen.main.bounds.width*0.24, height: UIScreen.main.bounds.height/20)
                                     .zIndex(0)
                                     .animation(
                                         .spring(response: 0.4, dampingFraction: 1, blendDuration: 1)
@@ -151,7 +156,7 @@ struct DashboardMobile: View {
                                     Spacer()
                                 }
                                 Spacer()
-                                    .frame(width: UIScreen.main.bounds.width/48)
+                                    .frame(width: UIScreen.main.bounds.width/40)
                             }
                             .gesture(DragGesture()
                                 .onEnded({
@@ -173,6 +178,9 @@ struct DashboardMobile: View {
                     )
             }
             .zIndex(2)
+        }
+        .onAppear{
+            TTV = TimetableView()
         }
     }
 }

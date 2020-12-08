@@ -21,6 +21,7 @@ struct PeriodView: View {
     var body: some View {
         let height = minutesBetweenDates(TF.date(from: period.startTime!)!, TF.date(from: period.endTime!)!)
         VStack{
+            Spacer()
             HStack{
                 ForEach(period.subjects){ su in
                     Text(su.name ?? "")
@@ -39,15 +40,15 @@ struct PeriodView: View {
                         .font(.system(size: 13, weight: .regular, design: .rounded))
                 }
             }
-            HStack{
-                ForEach(period.classes){ kl in
-                    Text(kl.name ?? "")
-                        .font(.system(size: 13, weight: .regular, design: .rounded))
-                }
-            }
+            Spacer()
         }
         .foregroundColor(period.subjects.isEmpty ? .primaryInvert : hexStringToUIColor(hex: period.subjects[0].foreColor!))
         .multilineTextAlignment(.center)
+        .frame(height: height)
+        .background(
+            RoundedRectangle(cornerRadius: 3)
+                .foregroundColor(period.subjects.isEmpty ? .primary : hexStringToUIColor(hex: period.subjects[0].backColor!))
+        )
     }
 }
 

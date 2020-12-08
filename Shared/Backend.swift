@@ -10,6 +10,11 @@ import SwiftUI
 import Combine
 
 class UserSettings: ObservableObject {
+    @Published var lastQuery: Date? {
+        didSet {
+            UserDefaults.standard.set(lastQuery, forKey: "lastQuery")
+        }
+    }
     @Published var loggedIn: Bool {
         didSet {
             UserDefaults.standard.set(loggedIn, forKey: "loggedIn")
@@ -25,7 +30,7 @@ class UserSettings: ObservableObject {
             UserDefaults.standard.set(password, forKey: "password")
         }
     }
-    @Published var sessionId: String{
+    @Published var sessionId: String?{
         didSet {
             UserDefaults.standard.set(sessionId, forKey: "sessionId")
         }
@@ -45,295 +50,138 @@ class UserSettings: ObservableObject {
             UserDefaults.standard.set(klasseId, forKey: "personType")
         }
     }
-    
-    func auth() -> (Bool, APIAuthResult?){
-        var result: APIAuthResult?
-        if username != "" && password != "" {
-            let semaphore = DispatchSemaphore(value: 0)
-
-            let parameters = "{\"id\":\"1\",\"method\":\"authenticate\",\"params\":{\"user\":\"\(username)\",\"password\":\"\(password.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\""))\", \"client\":\"web\"},\"jsonrpc\":\"2.0\"}"
-            let postData = parameters.data(using: .utf8)
-
-            var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=ECAD7173A723E9123ADBD05F398696B1", forHTTPHeaderField: "Cookie")
-
-            request.httpMethod = "POST"
-            request.httpBody = postData
-
-            let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data else {
-                    print(String(describing: error))
-                    return
-                }
-                print(String(data: data, encoding: .utf8)!)
-                result = try? JSONDecoder().decode(APIAuthResult.self, from: data)
-                semaphore.signal()
-            }
-            task.resume()
-            semaphore.wait()
+    @Published var scale: Double{
+        didSet {
+            UserDefaults.standard.set(scale, forKey: "scale")
         }
+    }
+    
+    func getRequest<ResultType: Decodable, APIType: Decodable & APIResult>(method: String, params: String, _: APIType.Type, _: ResultType.Type) -> (worked: Bool,result: [ResultType]?){
+        var result: APIType?
+        var objects: [ResultType]?
+        let semaphore = DispatchSemaphore (value: 0)
+
+        let parameters = "{\"id\":\"0\",\"method\":\"\(method)\",\"params\":{\(params)},\"jsonrpc\":\"2.0\"}"
+        let postData = parameters.data(using: .utf8)
+
+        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
+        request.addValue("\(sessionId!)", forHTTPHeaderField: "JSSESSIONID")
+        request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
+        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId!)", forHTTPHeaderField: "Cookie")
+
+        request.httpMethod = "POST"
+        request.httpBody = postData
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        guard let data = data else {
+            print(String(describing: error))
+            return
+        }
+            print(String(data: data, encoding: .utf8)!)
+            result = try? JSONDecoder().decode(APIType.self, from: data)
+            objects = result?.result as? [ResultType]
+            semaphore.signal()
+        }
+        task.resume()
+        semaphore.wait()
+        return (objects != nil, objects)
+    }
+    func auth(){
+        var result: APIAuthResult?
+        let semaphore = DispatchSemaphore(value: 0)
+        let parameters = "{\"id\":\"1\",\"method\":\"authenticate\",\"params\":{\"user\":\"\(username)\",\"password\":\"\(password.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\""))\", \"client\":\"web\"},\"jsonrpc\":\"2.0\"}"
+        let postData = parameters.data(using: .utf8)
+        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=ECAD7173A723E9123ADBD05F398696B1", forHTTPHeaderField: "Cookie")
+        request.httpMethod = "POST"
+        request.httpBody = postData
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data else {
+                print(String(describing: error))
+                return
+            }
+            print(String(data: data, encoding: .utf8)!)
+            result = try? JSONDecoder().decode(APIAuthResult.self, from: data)
+            semaphore.signal()
+        }
+        task.resume()
+        semaphore.wait()
         if result != nil{
-            sessionId = result!.result["sessionId"] as! String
-            klasseId = result!.result["klasseId"] as! Int
-            personId = result!.result["personId"] as! Int
-            personType = result!.result["personType"] as! Int
+            sessionId = result!.result["sessionId"] as? String
+            klasseId = result!.result["klasseId"] as? Int
+            personId = result!.result["personId"] as? Int
+            personType = result!.result["personType"] as? Int
             loggedIn = true
         }
         else {
+            sessionId = nil
+            klasseId = nil
+            personId = nil
+            personType = nil
             loggedIn = false
         }
-        return (result != nil, result)
     }
-    
-    func endSession(){
+    func endSession() -> Bool{
+        var result: APIAuthResult?
         let semaphore = DispatchSemaphore (value: 0)
-
         let parameters = "{\"id\":\"0\",\"method\":\"logout\",\"params\":{},\"jsonrpc\":\"2.0\"}"
         let postData = parameters.data(using: .utf8)
-
         var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: 10)
-        request.addValue("\(sessionId)", forHTTPHeaderField: "JSSESSIONID")
+        request.addValue("\(sessionId!)", forHTTPHeaderField: "JSSESSIONID")
         request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
-        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId)", forHTTPHeaderField: "Cookie")
-
+        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId!)", forHTTPHeaderField: "Cookie")
         request.httpMethod = "POST"
         request.httpBody = postData
-
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
-          guard let data = data else {
-            print(String(describing: error))
-            return
-          }
-          print(String(data: data, encoding: .utf8)!)
-          semaphore.signal()
+            guard let data = data else {
+                print(String(describing: error))
+                return
+            }
+            print(String(data: data, encoding: .utf8)!)
+            result = try? JSONDecoder().decode(APIAuthResult.self, from: data)
+            semaphore.signal()
         }
-
         task.resume()
         semaphore.wait()
+        if result != nil{
+            sessionId = nil
+        }
+        return result != nil
+    }
+    func logout(){
+        if endSession(){
+            klasseId = nil
+            personId = nil
+            personType = nil
+            loggedIn = false
+        }
     }
     
     func getTeachers() -> (Bool, [APITeacher]?){
-        var result: APITeacherResult?
-        var teachers: [APITeacher]?
-        let semaphore = DispatchSemaphore (value: 0)
-
-        let parameters = "{\"id\":\"0\",\"method\":\"getTeachers\",\"params\":{},\"jsonrpc\":\"2.0\"}"
-        let postData = parameters.data(using: .utf8)
-
-        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
-        request.addValue("\(sessionId)", forHTTPHeaderField: "JSSESSIONID")
-        request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
-        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId)", forHTTPHeaderField: "Cookie")
-
-        request.httpMethod = "POST"
-        request.httpBody = postData
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-        guard let data = data else {
-            print(String(describing: error))
-            return
-        }
-            print(String(data: data, encoding: .utf8)!)
-            result = try? JSONDecoder().decode(APITeacherResult.self, from: data)
-            teachers = result?.result
-            semaphore.signal()
-        }
-        task.resume()
-        semaphore.wait()
-        return (teachers != nil, teachers)
+        return getRequest(method: "getTeachers", params: "", APITeacherResult.self, APITeacher.self)
     }
-
     func getStudents() -> (Bool, [APIStudent]?){
-        var result: APIStudentResult?
-        var students: [APIStudent]?
-        let semaphore = DispatchSemaphore (value: 0)
-
-        let parameters = "{\"id\":\"0\",\"method\":\"getStudents\",\"params\":{},\"jsonrpc\":\"2.0\"}"
-        let postData = parameters.data(using: .utf8)
-
-        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
-        request.addValue("\(sessionId)", forHTTPHeaderField: "JSSESSIONID")
-        request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
-        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId)", forHTTPHeaderField: "Cookie")
-
-        request.httpMethod = "POST"
-        request.httpBody = postData
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-        guard let data = data else {
-            print(String(describing: error))
-            return
-        }
-            print(String(data: data, encoding: .utf8)!)
-            result = try? JSONDecoder().decode(APIStudentResult.self, from: data)
-            students = result?.result
-            semaphore.signal()
-        }
-        task.resume()
-        semaphore.wait()
-        return (students != nil, students)
+        return getRequest(method: "getStudents", params: "", APIStudentResult.self, APIStudent.self)
     }
-
     func getKlassen() -> (Bool,[APIBaseClass]?){
-        var result: APIBaseClassResult?
-        var baseClasses: [APIBaseClass]?
-        let semaphore = DispatchSemaphore (value: 0)
-
-        let parameters = "{\"id\":\"0\",\"method\":\"getKlassen\",\"params\":{},\"jsonrpc\":\"2.0\"}"
-        let postData = parameters.data(using: .utf8)
-
-        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
-        request.addValue("\(sessionId)", forHTTPHeaderField: "JSSESSIONID")
-        request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
-        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId)", forHTTPHeaderField: "Cookie")
-
-        request.httpMethod = "POST"
-        request.httpBody = postData
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-        guard let data = data else {
-            print(String(describing: error))
-            return
-        }
-            print(String(data: data, encoding: .utf8)!)
-            result = try? JSONDecoder().decode(APIBaseClassResult.self, from: data)
-            baseClasses = result?.result
-            semaphore.signal()
-        }
-        task.resume()
-        semaphore.wait()
-        return (baseClasses != nil, baseClasses)
+        return getRequest(method: "getKlassen", params: "", APIBaseClassResult.self, APIBaseClass.self)
     }
-
     func getSubjects() -> (Bool, [APISubject]?){
-        var result: APISubjectResult?
-        var subjects: [APISubject]?
-        let semaphore = DispatchSemaphore (value: 0)
-
-        let parameters = "{\"id\":\"0\",\"method\":\"getSubjects\",\"params\":{},\"jsonrpc\":\"2.0\"}"
-        let postData = parameters.data(using: .utf8)
-
-        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
-        request.addValue("\(sessionId)", forHTTPHeaderField: "JSSESSIONID")
-        request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
-        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId)", forHTTPHeaderField: "Cookie")
-
-        request.httpMethod = "POST"
-        request.httpBody = postData
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-        guard let data = data else {
-            print(String(describing: error))
-            return
-        }
-            print(String(data: data, encoding: .utf8)!)
-            result = try? JSONDecoder().decode(APISubjectResult.self, from: data)
-            subjects = result?.result
-            semaphore.signal()
-        }
-        task.resume()
-        semaphore.wait()
-        return (subjects != nil, subjects)
+        return getRequest(method: "getSubjects", params: "", APISubjectResult.self, APISubject.self)
     }
-
     func getRooms() -> (Bool, [APIRoom]?){
-        var result: APIRoomResult?
-        var rooms: [APIRoom]?
-        let semaphore = DispatchSemaphore (value: 0)
-
-        let parameters = "{\"id\":\"0\",\"method\":\"getRooms\",\"params\":{},\"jsonrpc\":\"2.0\"}"
-        let postData = parameters.data(using: .utf8)
-
-        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
-        request.addValue("\(sessionId)", forHTTPHeaderField: "JSSESSIONID")
-        request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
-        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId)", forHTTPHeaderField: "Cookie")
-
-        request.httpMethod = "POST"
-        request.httpBody = postData
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-        guard let data = data else {
-            print(String(describing: error))
-            return
-        }
-            print(String(data: data, encoding: .utf8)!)
-            result = try? JSONDecoder().decode(APIRoomResult.self, from: data)
-            rooms = result?.result
-            semaphore.signal()
-        }
-        task.resume()
-        semaphore.wait()
-        print("\n\n\n\n")
-        return (rooms != nil, rooms)
+        return getRequest(method: "getRooms", params: "", APIRoomResult.self, APIRoom.self)
     }
-    
     func getTimetable() -> (Bool, [APIPeriod]?){
-        var result: APITimetableResult?
-        var periods: [APIPeriod]?
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYYMMdd"
-        let timeFormatter = DateFormatter()
-        timeFormatter.dateFormat = "HHmm"
-        let semaphore = DispatchSemaphore (value: 0)
-
-        let parameters = "{\"id\":\"0\",\"method\":\"getTimetable\",\"params\":{\"options\":{\"element\": {\"id\":\(personId!),\"type\":\( personType!)},\"showInfo\":true,\"showLsText\":true,\"startDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: -6, to: Date())!))\",\"endDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: 6, to: Date())!))\"}},\"jsonrpc\":\"2.0\"}"
-        let postData = parameters.data(using: .utf8)
-
-        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
-        request.addValue("\(sessionId)", forHTTPHeaderField: "JSSESSIONID")
-        request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
-        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId)", forHTTPHeaderField: "Cookie")
-
-        request.httpMethod = "POST"
-        request.httpBody = postData
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-        guard let data = data else {
-            print(String(describing: error))
-            return
-        }
-            print(String(data: data, encoding: .utf8)!)
-            result = try? JSONDecoder().decode(APITimetableResult.self, from: data)
-            periods = result?.result
-            semaphore.signal()
-        }
-        task.resume()
-        semaphore.wait()
-        print("\n\n\n\n")
-        return (periods != nil, periods)
+                dateFormatter.dateFormat = "YYYYMMdd"
+                let timeFormatter = DateFormatter()
+                timeFormatter.dateFormat = "HHmm"
+        return getRequest(method: "getTimetable", params: "\"options\":{\"element\": {\"id\":\(personId!),\"type\":\( personType!)},\"showSubstText\":true,\"showInfo\":true,\"showLsText\":true,\"startDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: -6, to: Date())!))\",\"endDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: 6, to: Date())!))\"}", APITimetableResult.self, APIPeriod.self)
     }
-
     func getGrid() -> (Bool,[APIGridElement]?){
-        var result: APIGridResult?
-        var gridElements: [APIGridElement]?
-        let semaphore = DispatchSemaphore (value: 0)
-
-        let parameters = "{\"id\":\"0\",\"method\":\"getTimegridUnits\",\"params\":{},\"jsonrpc\":\"2.0\"}"
-        let postData = parameters.data(using: .utf8)
-
-        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
-        request.addValue("\(sessionId)", forHTTPHeaderField: "JSSESSIONID")
-        request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
-        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId)", forHTTPHeaderField: "Cookie")
-
-        request.httpMethod = "POST"
-        request.httpBody = postData
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-        guard let data = data else {
-            print(String(describing: error))
-            return
-        }
-            print(String(data: data, encoding: .utf8)!)
-            result = try? JSONDecoder().decode(APIGridResult.self, from: data)
-            gridElements = result?.result
-            semaphore.signal()
-        }
-        task.resume()
-        semaphore.wait()
-        return (gridElements != nil, gridElements)
+        return getRequest(method: "getTimegridUnits", params: "", APIGridResult.self, APIGridElement.self)
     }
     
     init() {
@@ -344,6 +192,8 @@ class UserSettings: ObservableObject {
         self.personId = UserDefaults.standard.object(forKey: "personId") as? Int? ?? nil
         self.klasseId = UserDefaults.standard.object(forKey: "klasseId") as? Int? ?? nil
         self.loggedIn = UserDefaults.standard.object(forKey: "loggedIn") as? Bool ?? false
+        self.lastQuery = UserDefaults.standard.object(forKey: "lastQuery") as? Date? ?? nil
+        self.scale = UserDefaults.standard.object(forKey: "scale") as? Double ?? 1
     }
 }
 
@@ -407,13 +257,7 @@ struct APIAuthResult: Decodable{
            }
        }
 }
-struct APIResult: Decodable{
-    var jsonrpc: String
-    var id: String
-    var result: Data
-}
-
-struct APITeacherResult: Decodable{
+struct APITeacherResult: Decodable, APIResult{
     var jsonrpc: String
     var id: String
     var result: [APITeacher]
@@ -426,8 +270,7 @@ struct APITeacher: Decodable{
     var foreColor: String?
     var backColor: String?
 }
-
-struct APIStudentResult: Decodable{
+struct APIStudentResult: Decodable, APIResult{
     var jsonrpc: String
     var id: String
     var result: [APIStudent]
@@ -440,8 +283,7 @@ struct APIStudent: Decodable{
     var longName: String?
     var gender: String?
 }
-
-struct APIBaseClassResult: Decodable{
+struct APIBaseClassResult: Decodable, APIResult{
     var jsonrpc: String
     var id: String
     var result: [APIBaseClass]
@@ -455,8 +297,7 @@ struct APIBaseClass: Decodable{
     var teacher1: Int?
     var teacher2: Int?
 }
-
-struct APISubjectResult: Decodable{
+struct APISubjectResult: Decodable, APIResult{
     var jsonrpc: String
     var id: String
     var result: [APISubject]
@@ -470,8 +311,7 @@ struct APISubject: Decodable{
     var foreColor: String?
     var backColor: String?
 }
-
-struct APIRoomResult: Decodable{
+struct APIRoomResult: Decodable, APIResult{
     var jsonrpc: String
     var id: String
     var result: [APIRoom]
@@ -483,8 +323,7 @@ struct APIRoom: Decodable{
     var foreColor: String?
     var backColor: String?
 }
-
-struct APITimetableResult: Decodable{
+struct APITimetableResult: Decodable, APIResult{
     var jsonrpc: String
     var id: String
     var result: [APIPeriod]
@@ -507,7 +346,7 @@ struct APIPeriod: Decodable{
     var activityType: String?
 }
 
-struct APIGridResult: Decodable{
+struct APIGridResult: Decodable, APIResult{
     var jsonrpc: String
     var id: String
     var result: [APIGridElement]
@@ -535,4 +374,9 @@ func minutesBetweenDates(_ oldDate: Date, _ newDate: Date) -> CGFloat {
 
     //then return the difference
     return CGFloat(newDateMinutes - oldDateMinutes)
+}
+
+protocol APIResult{
+    associatedtype ResultType: Decodable
+    var result: [ResultType] { get set }
 }

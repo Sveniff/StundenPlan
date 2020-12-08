@@ -10,7 +10,6 @@ import CoreData
 import Combine
 
 struct ContentView: View {
-    @State var orientation = UIDevice.current.orientation
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var user: UserSettings
     @FetchRequest(entity: Teacher.entity(), sortDescriptors: [])
@@ -27,19 +26,12 @@ struct ContentView: View {
     var storedGrid: FetchedResults<GridElement>
     @FetchRequest(entity: Day.entity(), sortDescriptors: [])
     var storedays: FetchedResults<Day>
-    let orientationChanged = NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
-            .makeConnectable()
-            .autoconnect()
     var body: some View {
         VStack{
             #if os(iOS)
                 DashboardMobile()
             #endif
         }
-        .onReceive(orientationChanged) { _ in
-                    self.orientation = UIDevice.current.orientation
-                }
-//MARK:API REQUESTS
         .onAppear{
             if user.sessionId != ""{
                 var teachers: [APITeacher] = []
@@ -66,7 +58,7 @@ struct ContentView: View {
                     newTeacher.longName = teacher.longName
                     newTeacher.name = teacher.name
                 }
-    
+                
                 for subject in subjects{
                     if storedSubjects.contains(where: {su in su.id == subject.id}){
                         viewContext.delete(storedSubjects.filter{$0.id == subject.id}[0])
@@ -78,7 +70,7 @@ struct ContentView: View {
                     newSubject.longName = subject.longName
                     newSubject.name = subject.name
                 }
-    
+                
                 for baseClass in baseClasses{
                     if storedBaseClasses.contains(where: {kl in kl.id == baseClass.id}){
                         viewContext.delete(storedBaseClasses.filter{$0.id == baseClass.id}[0])
@@ -94,7 +86,7 @@ struct ContentView: View {
                     newBaseClass.teacher2 = Int64(baseClass.teacher2!)
                     }
                 }
-    
+                
                 for room in rooms{
                     if storedRooms.contains(where: {ro in ro.id == room.id}){
                         viewContext.delete(storedRooms.filter{$0.id == room.id}[0])
@@ -137,7 +129,7 @@ struct ContentView: View {
                     if storedPeriods.contains(where: {pe in pe.id == period.id}){
                         viewContext.delete(storedPeriods.filter{$0.id == period.id}[0])
                     }
-                    var newPeriod = Period(context: viewContext)
+                    let newPeriod = Period(context: viewContext)
                     newPeriod.activityType = period.activityType
                     newPeriod.code = period.code
                     newPeriod.id = Int64(period.id)

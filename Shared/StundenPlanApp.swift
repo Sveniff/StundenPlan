@@ -19,7 +19,7 @@ struct StundenPlanApp: App {
     
     var body: some Scene {
         WindowGroup {
-            if user.password != "" && user.username != ""{
+            if user.password != "" && user.username != "" && user.loggedIn{
                 ContentView()
                     .environmentObject(user)
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)

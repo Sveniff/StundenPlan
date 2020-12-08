@@ -9,6 +9,14 @@ import SwiftUI
 import Combine
 
 struct TimetableView: View {
+    @State var angle: Double = 0.0
+    @State var isAnimating = false
+
+    var foreverAnimation: Animation {
+        Animation.linear(duration: 2.0)
+            .repeatForever(autoreverses: false)
+    }
+    @EnvironmentObject var user: UserSettings
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(entity: Teacher.entity(), sortDescriptors: [])
     var storedTeachers: FetchedResults<Teacher>
@@ -26,7 +34,7 @@ struct TimetableView: View {
     var storedDays: FetchedResults<Day>
     let TF = DateFormatter()
     var calendar = Calendar(identifier: Calendar.Identifier.gregorian)
-    
+    @State var rotate: Bool = false
     init(){
         TF.dateFormat = "H:mm"
         calendar.firstWeekday = 7
@@ -41,36 +49,33 @@ struct TimetableView: View {
                     Spacer()
                         .frame(height: 100)
                     let days = storedDays.isEmpty ? nil : storedDays[2].elements.sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}
-                    if days != nil{
-                        ForEach(days!){ grid in
-                            let height = minutesBetweenDates(TF.date(from: grid.startTime!)!, TF.date(from: grid.endTime!)!)
-                            let space = minutesBetweenDates(TF.date(from: grid.endTime!)!, TF.date(from: days![days!.firstIndex(of: grid)! < days!.count - 1 ? days!.firstIndex(of: grid)! + 1 : days!.count - 1].startTime!)!)
+                    ForEach(days ?? []){ grid in
+                        let height = minutesBetweenDates(TF.date(from: grid.startTime!)!, TF.date(from: grid.endTime!)!) * CGFloat(user.scale)
+                        let space = minutesBetweenDates(TF.date(from: grid.endTime!)!, TF.date(from: days![days!.firstIndex(of: grid)! < days!.count - 1 ? days!.firstIndex(of: grid)! + 1 : days!.count - 1].startTime!)!) * CGFloat(user.scale)
+                        VStack{
                             VStack{
-                                VStack{
-                                    Text(grid.startTime ?? "")
-                                    Text(grid.name ?? "")
-                                        .font(.system(size: 18, weight: .regular, design: .rounded))
-                                    Text(grid.endTime ?? "")
-                                }
-                                .frame(width: UIScreen.main.bounds.width*0.13, height: CGFloat(height))
-                                .background(
-                                    Rectangle()
-                                        .foregroundColor(Color.secondary.opacity(0.1))
-                                        .frame(width: UIScreen.main.bounds.width*0.1, height: CGFloat(height))
-                                )
-                                Spacer()
-                                    .frame(height: CGFloat(abs(space)+1))
+                                Text(grid.startTime ?? "")
+                                Text(grid.name ?? "")
+                                    .font(.system(size: 18, weight: .regular, design: .rounded))
+                                Text(grid.endTime ?? "")
                             }
-                            .font(.system(size: 8, weight: .regular, design: .rounded))
+                            .frame(width: UIScreen.main.bounds.width*0.13, height: CGFloat(height))
+                            .background(
+                                Rectangle()
+                                    .foregroundColor(Color.secondary.opacity(0.1))
+                            )
+                            Spacer()
+                                .frame(height: CGFloat(abs(space)+1))
                         }
+                        .font(.system(size: 5.5 * CGFloat(user.scale), weight: .regular, design: .rounded))
                     }
                     Spacer()
                 }
-                .frame(width: UIScreen.main.bounds.width*0.1, height: UIScreen.main.bounds.height)
 
                 let allPeriods = storedPeriods.filter({
                     let date = calendar.component(.weekOfYear, from: $0.date!) == calendar.component(.weekOfYear, from: Date())
-                    return date
+                    let notCancelled = $0.code != "cancelled"
+                    return date && notCancelled
                 }).sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}
                 ForEach(storedDays.filter({!$0.elements.isEmpty}).sorted{$0.number < $1.number}){ day in
                     let days = day.elements.sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}
@@ -84,23 +89,48 @@ struct TimetableView: View {
                                 .multilineTextAlignment(.center)
                                 .font(.system(size: 23, weight: .semibold, design: .rounded))
                             ForEach(day.elements.sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}){ grid in
-                                let height = minutesBetweenDates(TF.date(from: grid.startTime!)!, TF.date(from: grid.endTime!)!)
-                                let space = minutesBetweenDates(TF.date(from: grid.endTime!)!, TF.date(from: days[days.firstIndex(of: grid)! < days.count - 1 ? days.firstIndex(of: grid)! + 1 : days.count - 1].startTime!)!)
+                                let height = minutesBetweenDates(TF.date(from: grid.startTime!)!, TF.date(from: grid.endTime!)!) * CGFloat(user.scale)
+                                let space = minutesBetweenDates(TF.date(from: grid.endTime!)!, TF.date(from: days[days.firstIndex(of: grid)! < days.count - 1 ? days.firstIndex(of: grid)! + 1 : days.count - 1].startTime!)!) * CGFloat(user.scale)
                                 let periods = allDayPeriods.filter({
                                     let start = Int16(grid.startTime!.replacingOccurrences(of: ":", with: ""))!...(Int16(grid.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16($0.startTime!.replacingOccurrences(of: ":", with: ""))!
-                                    let end = Int16(grid.startTime!.replacingOccurrences(of: ":", with: ""))!...(Int16(grid.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16($0.endTime!.replacingOccurrences(of: ":", with: ""))!
-                                    let overlapsStart = Int16($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int16(grid.startTime!.replacingOccurrences(of: ":", with: ""))!
-                                    let overlapsEnd = Int16(grid.endTime!.replacingOccurrences(of: ":", with: ""))! < Int16($0.endTime!.replacingOccurrences(of: ":", with: ""))!
-                                    return start || end || (overlapsStart && overlapsEnd)
+                                     let end = Int16(grid.startTime!.replacingOccurrences(of: ":", with: ""))!...(Int16(grid.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16($0.endTime!.replacingOccurrences(of: ":", with: ""))!
+                                     return start && end
                                 })
                                 VStack{
                                     HStack{
                                         if !periods.isEmpty{
                                             ForEach(periods){ period in
-                                                PeriodView(period)
-                                                    .frame(width: UIScreen.main.bounds.width*0.15/CGFloat(periods.count)-CGFloat((periods.count-1)*5), height: CGFloat(height))
+                                                    VStack{
+                                                        HStack{
+                                                            ForEach(period.subjects){ su in
+                                                                Text(su.name ?? "")
+                                                                    .font(.system(size: 10 * CGFloat(user.scale), weight: .semibold, design: .rounded))
+                                                            }
+                                                        }
+                                                        HStack{
+                                                            ForEach(period.rooms){ ro in
+                                                                Text(ro.name ?? "")
+                                                                    .font(.system(size: 8.5 * CGFloat(user.scale), weight: .semibold, design: .rounded))
+                                                            }
+                                                        }
+                                                        HStack{
+                                                            ForEach(period.teachers){ te in
+                                                                Text(te.name ?? "")
+                                                                    .font(.system(size: 8.5 * CGFloat(user.scale), weight: .semibold, design: .rounded))
+                                                            }
+                                                        }
+                                                        HStack{
+                                                            ForEach(period.classes){ kl in
+                                                                Text(kl.name ?? "")
+                                                                    .font(.system(size: 8.5 * CGFloat(user.scale), weight: .semibold, design: .rounded))
+                                                            }
+                                                        }
+                                                    }
+                                                    .foregroundColor(period.subjects.isEmpty ? .primaryInvert : hexStringToUIColor(hex: period.subjects[0].foreColor!))
+                                                    .multilineTextAlignment(.center)
+                                                    .frame(width: UIScreen.main.bounds.width*0.16/CGFloat(periods.count)-CGFloat((periods.count-1)), height: CGFloat(height))
                                                     .background(
-                                                        RoundedRectangle(cornerRadius: 3)
+                                                        RoundedRectangle(cornerRadius: 10)
                                                             .foregroundColor(period.subjects.isEmpty ? .primary : hexStringToUIColor(hex: period.subjects[0].backColor!))
                                                     )
                                             }
@@ -108,13 +138,16 @@ struct TimetableView: View {
                                     }
                                     Spacer()
                                 }
-                                .frame(width: UIScreen.main.bounds.width*0.16, height: CGFloat(height+abs(space)+1))
+                                .frame(width: UIScreen.main.bounds.width*0.17, height: CGFloat(height+abs(space))+1)
                             }
                             Spacer()
                         }
                     }
                 }
+                Spacer()
             }
+            Spacer()
+                .frame(height:150)
         }
     }
 }

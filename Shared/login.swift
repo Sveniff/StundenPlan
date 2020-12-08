@@ -47,11 +47,12 @@ struct login: View {
                             .font(.system(size: 15, weight: .regular, design: .default))
                             .foregroundColor(.red)
                         Spacer().frame(height: 10)
-                    }
+                    } 
                     Button(action: {
                         user.username = name
                         user.password = pass
-                        if user.auth().0{
+                        user.auth()
+                        if user.sessionId != nil{
                             wrongData = false
                             user.loggedIn = true
                         }
