@@ -8,11 +8,21 @@
 import Foundation
 import SwiftUI
 import Combine
-
+//MARK: UI extensions and functions
 extension Color {
     static let primaryInvert = Color("Invert")
     static let gradient_top = Color("Gradient-top")
     static let gradient_bottom = Color("Gradient-bottom")
+}
+
+func minutesBetweenDates(_ oldDate: Date, _ newDate: Date) -> CGFloat {
+
+    //get both times sinces refrenced date and divide by 60 to get minutes
+    let newDateMinutes = newDate.timeIntervalSinceReferenceDate/60
+    let oldDateMinutes = oldDate.timeIntervalSinceReferenceDate/60
+
+    //then return the difference
+    return CGFloat(newDateMinutes - oldDateMinutes)
 }
 
 func hexStringToUIColor (hex:String) -> Color {

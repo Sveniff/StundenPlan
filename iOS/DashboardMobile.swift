@@ -29,6 +29,9 @@ struct DashboardMobile: View {
                 VStack{
                     TTV
                 }
+                .onAppear{
+                    TTV = TimetableView()
+                }
                     .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height, alignment: .center)
                     .fixedSize()
                     .zIndex(0)
@@ -106,7 +109,7 @@ struct DashboardMobile: View {
                 Spacer().frame(height:UIScreen.main.bounds.height*0.9)
                 RoundedRectangle(cornerRadius: 50)
                     .frame(height:60)
-                    .padding()
+                    .padding(10)
                     .foregroundColor(.primaryInvert)
                     .shadow(radius: 10)
                     .overlay(
@@ -140,7 +143,7 @@ struct DashboardMobile: View {
                             .zIndex(1)
                             HStack{
                                 Spacer()
-                                    .frame(width: UIScreen.main.bounds.width/40)
+                                    .frame(width: UIScreen.main.bounds.width/20)
                                 if selection == 1 || selection == 2{
                                     Spacer()
                                 }
@@ -156,7 +159,7 @@ struct DashboardMobile: View {
                                     Spacer()
                                 }
                                 Spacer()
-                                    .frame(width: UIScreen.main.bounds.width/40)
+                                    .frame(width: UIScreen.main.bounds.width/20)
                             }
                             .gesture(DragGesture()
                                 .onEnded({
@@ -178,9 +181,6 @@ struct DashboardMobile: View {
                     )
             }
             .zIndex(2)
-        }
-        .onAppear{
-            TTV = TimetableView()
         }
     }
 }

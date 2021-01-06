@@ -8,8 +8,18 @@
 import Foundation
 import SwiftUI
 import Combine
+import CoreData
 
 class UserSettings: ObservableObject {
+    //MARK: User settings
+    @Environment(\.managedObjectContext) private var viewContext
+    var storedTeachers: [Teacher] = []
+    var storedSubjects: [Subject] = []
+    var storedBaseClasses: [BaseClass] = []
+    var storedPeriods: [Period] = []
+    var storedRooms: [Room] = []
+    var storedGrid: [GridElement] = []
+    var storedays: [Day] = []
     @Published var lastQuery: Date? {
         didSet {
             UserDefaults.standard.set(lastQuery, forKey: "lastQuery")
@@ -55,30 +65,30 @@ class UserSettings: ObservableObject {
             UserDefaults.standard.set(scale, forKey: "scale")
         }
     }
-    
-    func getRequest<ResultType: Decodable, APIType: Decodable & APIResult>(method: String, params: String, _: APIType.Type, _: ResultType.Type) -> (worked: Bool,result: [ResultType]?){
-        var result: APIType?
-        var objects: [ResultType]?
+    //MARK: Requests
+    func getRequest<ResultType: Decodable, APIType: Decodable & APIResult>(method: String, params: String, _: APIType.Type, _: ResultType.Type) -> (Bool, [ResultType]?){
+        var result: APIType? //var of type that conforms to answer sent by the API
+        var objects: [ResultType]?// var of objects to return
         let semaphore = DispatchSemaphore (value: 0)
 
-        let parameters = "{\"id\":\"0\",\"method\":\"\(method)\",\"params\":{\(params)},\"jsonrpc\":\"2.0\"}"
+        let parameters = "{\"id\":\"0\",\"method\":\"\(method)\",\"params\":{\(params)},\"jsonrpc\":\"2.0\"}" // String to store params of request
         let postData = parameters.data(using: .utf8)
 
-        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
-        request.addValue("\(sessionId!)", forHTTPHeaderField: "JSSESSIONID")
+        var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: 5.0)//create request
+        request.addValue("\(sessionId!)", forHTTPHeaderField: "JSSESSIONID")//add headers in fields
         request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
         request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId!)", forHTTPHeaderField: "Cookie")
-
+        
         request.httpMethod = "POST"
         request.httpBody = postData
 
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
-        guard let data = data else {
-            print(String(describing: error))
+        guard let data = data else {//execute if the request was succesful
+            print(String(describing: error))//print error
             return
         }
-            print(String(data: data, encoding: .utf8)!)
-            result = try? JSONDecoder().decode(APIType.self, from: data)
+            print(String(data: data, encoding: .utf8)!)//print data response of server
+            result = try? JSONDecoder().decode(APIType.self, from: data)//decode result into
             objects = result?.result as? [ResultType]
             semaphore.signal()
         }
@@ -86,6 +96,7 @@ class UserSettings: ObservableObject {
         semaphore.wait()
         return (objects != nil, objects)
     }
+    //MARK: Authentication
     func auth(){
         var result: APIAuthResult?
         let semaphore = DispatchSemaphore(value: 0)
@@ -157,7 +168,7 @@ class UserSettings: ObservableObject {
             loggedIn = false
         }
     }
-    
+    //MARK: Data Requests
     func getTeachers() -> (Bool, [APITeacher]?){
         return getRequest(method: "getTeachers", params: "", APITeacherResult.self, APITeacher.self)
     }
@@ -183,7 +194,133 @@ class UserSettings: ObservableObject {
     func getGrid() -> (Bool,[APIGridElement]?){
         return getRequest(method: "getTimegridUnits", params: "", APIGridResult.self, APIGridElement.self)
     }
-    
+    func store(){
+        var teachers: [APITeacher] = []
+        var subjects: [APISubject] = []
+        var baseClasses: [APIBaseClass] = []
+        var periods: [APIPeriod] = []
+        var rooms: [APIRoom] = []
+        var grid: [APIGridElement] = []
+        teachers = getTeachers().1!
+        subjects = getSubjects().1!
+        baseClasses = getKlassen().1!
+        rooms = getRooms().1!
+        periods = getTimetable().1!
+        grid = getGrid().1!
+        for teacher in teachers{
+            if storedTeachers.contains(where: {te in te.id == teacher.id}){
+                viewContext.delete(storedTeachers.filter{$0.id == teacher.id}[0])
+            }
+            let newTeacher = Teacher(context: viewContext)
+            newTeacher.backColor = teacher.backColor
+            newTeacher.foreColor = teacher.foreColor
+            newTeacher.foreName = teacher.foreName
+            newTeacher.id = Int64(teacher.id)
+            newTeacher.longName = teacher.longName
+            newTeacher.name = teacher.name
+        }
+
+        for subject in subjects{
+            if storedSubjects.contains(where: {su in su.id == subject.id}){
+                viewContext.delete(storedSubjects.filter{$0.id == subject.id}[0])
+            }
+            let newSubject = Subject(context: viewContext)
+            newSubject.backColor = subject.backColor
+            newSubject.foreColor = subject.foreColor
+            newSubject.id = Int64(subject.id)
+            newSubject.longName = subject.longName
+            newSubject.name = subject.name
+        }
+
+        for baseClass in baseClasses{
+            if storedBaseClasses.contains(where: {kl in kl.id == baseClass.id}){
+                viewContext.delete(storedBaseClasses.filter{$0.id == baseClass.id}[0])
+            }
+            let newBaseClass = BaseClass(context: viewContext)
+            newBaseClass.backColor = baseClass.backColor
+            newBaseClass.foreColor = baseClass.foreColor
+            newBaseClass.id = Int64(baseClass.id)
+            newBaseClass.longName = baseClass.longName
+            newBaseClass.name = baseClass.name
+            if baseClass.teacher1 != nil && baseClass.teacher2 != nil{
+            newBaseClass.teacher1 = Int64(baseClass.teacher1!)
+            newBaseClass.teacher2 = Int64(baseClass.teacher2!)
+            }
+        }
+
+        for room in rooms{
+            if storedRooms.contains(where: {ro in ro.id == room.id}){
+                viewContext.delete(storedRooms.filter{$0.id == room.id}[0])
+            }
+            let newRoom = Room(context: viewContext)
+            newRoom.backColor = room.backColor
+            newRoom.foreColor = room.foreColor
+            newRoom.id = Int64(room.id)
+            newRoom.longName = room.longName
+            newRoom.name = room.name
+        }
+        try? viewContext.save()
+        for day in 1...7{
+            if storedays.contains(where: {da in da.number == day}){
+                viewContext.delete(storedays.filter({$0.number == day})[0])
+            }
+            let newDay = Day(context: viewContext)
+            newDay.number = Int16(day)
+        }
+        try? viewContext.save()
+        if !grid.isEmpty{
+            for element in storedGrid{
+                viewContext.delete(element)
+            }
+            for grid in grid{
+                for element in grid.timeUnits{
+                    let newElement = GridElement(context: viewContext)
+                    newElement.startTime = String(element.startTime)
+                    newElement.startTime!.insert(contentsOf: ":", at: newElement.startTime!.index(newElement.startTime!.endIndex, offsetBy: -2))
+                    newElement.endTime = String(element.endTime)
+                    newElement.endTime!.insert(contentsOf: ":", at: newElement.endTime!.index(newElement.endTime!.endIndex, offsetBy: -2))
+                    newElement.name = element.name
+                    newElement.day = storedays.filter({day in day.number == grid.day})[0]
+                }
+            }
+        }
+        for period in periods{
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "YYYYMMdd"
+            if storedPeriods.contains(where: {pe in pe.id == period.id}){
+                viewContext.delete(storedPeriods.filter{$0.id == period.id}[0])
+            }
+            let newPeriod = Period(context: viewContext)
+            newPeriod.activityType = period.activityType
+            newPeriod.code = period.code
+            newPeriod.id = Int64(period.id)
+            newPeriod.date = dateFormatter.date(from: String(period.date))
+            newPeriod.endTime = String(period.endTime)
+            newPeriod.endTime!.insert(contentsOf: ":", at: newPeriod.endTime!.index(newPeriod.endTime!.endIndex, offsetBy: -2))
+            newPeriod.startTime = String(period.startTime)
+            newPeriod.startTime!.insert(contentsOf: ":", at: newPeriod.startTime!.index(newPeriod.startTime!.endIndex, offsetBy: -2))
+            newPeriod.statflags = period.statflags
+            newPeriod.text = period.lstext
+            newPeriod.type = period.lstype
+            newPeriod.classesNS = NSSet.init(array: storedBaseClasses.filter({kl in(period.kl?.contains(where: {id in kl.id == id.id}) ?? false)}))
+            newPeriod.subjectsNS = NSSet.init(array: storedSubjects.filter({su in(period.su?.contains(where: {id in su.id == id.id}) ?? false)}))
+            newPeriod.teachersNS = NSSet.init(array: storedTeachers.filter({te in(period.te?.contains(where: {id in te.id == id.id}) ?? false)}))
+            newPeriod.roomsNS = NSSet.init(array: storedRooms.filter({ro in(period.ro?.contains(where: {id in ro.id == id.id}) ?? false)}))
+        }
+        try? viewContext.save()
+        for period in storedPeriods{
+            var collides = 0
+            for compareObj in storedPeriods.filter({$0.date == period.date}){
+                let start = Int16(period.startTime!.replacingOccurrences(of: ":", with: ""))!+1..<(Int16(period.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16(compareObj.startTime!.replacingOccurrences(of: ":", with: ""))!
+                let end = Int16(period.startTime!.replacingOccurrences(of: ":", with: ""))!+1..<(Int16(period.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16(compareObj.endTime!.replacingOccurrences(of: ":", with: ""))!
+                let overlapsStart = Int16(compareObj.startTime!.replacingOccurrences(of: ":", with: ""))! < Int16(period.startTime!.replacingOccurrences(of: ":", with: ""))!
+                let overlapsEnd = Int16(period.endTime!.replacingOccurrences(of: ":", with: ""))! < Int16(compareObj.endTime!.replacingOccurrences(of: ":", with: ""))!
+                collides += start || end || (overlapsStart && overlapsEnd) ? 1 : 0
+            }
+        }
+        try? viewContext.save()
+        endSession()
+    }
     init() {
         self.username = UserDefaults.standard.object(forKey: "username") as? String ?? ""
         self.password = UserDefaults.standard.object(forKey: "password") as? String ?? ""
@@ -194,9 +331,18 @@ class UserSettings: ObservableObject {
         self.loggedIn = UserDefaults.standard.object(forKey: "loggedIn") as? Bool ?? false
         self.lastQuery = UserDefaults.standard.object(forKey: "lastQuery") as? Date? ?? nil
         self.scale = UserDefaults.standard.object(forKey: "scale") as? Double ?? 1
+        self.storedBaseClasses = BaseClass.all(viewContext)
+        self.storedays = Day.all(viewContext)
+        self.storedGrid = GridElement.all(viewContext)
+        self.storedRooms = Room.all(viewContext)
+        self.storedPeriods = Period.all(viewContext)
+        self.storedSubjects = Subject.all(viewContext)
+        self.storedTeachers = Teacher.all(viewContext)
     }
 }
 
+
+//MARK: API Types
 struct APIAuthResult: Decodable{
     var jsonrpc: String
     var id: String
@@ -366,17 +512,116 @@ struct ID: Decodable{
 }
 
 
-func minutesBetweenDates(_ oldDate: Date, _ newDate: Date) -> CGFloat {
-
-    //get both times sinces refrenced date and divide by 60 to get minutes
-    let newDateMinutes = newDate.timeIntervalSinceReferenceDate/60
-    let oldDateMinutes = oldDate.timeIntervalSinceReferenceDate/60
-
-    //then return the difference
-    return CGFloat(newDateMinutes - oldDateMinutes)
-}
-
+//MARK: extensions functions and protocols
 protocol APIResult{
     associatedtype ResultType: Decodable
     var result: [ResultType] { get set }
 }
+
+
+extension BaseClass {
+    static func all(_ viewContext: NSManagedObjectContext) -> [BaseClass] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<BaseClass> = BaseClass.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [BaseClass]()
+    }
+}
+
+extension Day {
+    static func all(_ viewContext: NSManagedObjectContext) -> [Day] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<Day> = Day.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [Day]()
+    }
+}
+
+extension GridElement {
+    static func all(_ viewContext: NSManagedObjectContext) -> [GridElement] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<GridElement> = GridElement.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [GridElement]()
+    }
+}
+
+extension Period {
+    static func all(_ viewContext: NSManagedObjectContext) -> [Period] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<Period> = Period.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [Period]()
+    }
+}
+
+extension Room {
+    static func all(_ viewContext: NSManagedObjectContext) -> [Room] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<Room> = Room.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [Room]()
+    }
+}
+
+extension Subject {
+    static func all(_ viewContext: NSManagedObjectContext) -> [Subject] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<Subject> = Subject.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [Subject]()
+    }
+}
+
+extension Teacher {
+    static func all(_ viewContext: NSManagedObjectContext) -> [Teacher] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<Teacher> = Teacher.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [Teacher]()
+    }
+}
+
+

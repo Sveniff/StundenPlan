@@ -14,6 +14,7 @@ struct StundenPlanApp: App {
     let persistenceController = PersistenceController.shared
     @ObservedObject var user = UserSettings()
     init() {
+        
         user.auth()
     }
     

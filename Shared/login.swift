@@ -86,8 +86,6 @@ struct login: View {
 
 struct login_Previews: PreviewProvider {
     static var previews: some View {
-        return login()
-            .environmentObject(UserSettings())
-//            .frame(width: 500, height: 500, alignment: .center)
+        login()
     }
 }

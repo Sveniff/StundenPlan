@@ -10,12 +10,6 @@ import Combine
 
 struct TimetableView: View {
     @State var angle: Double = 0.0
-    @State var isAnimating = false
-
-    var foreverAnimation: Animation {
-        Animation.linear(duration: 2.0)
-            .repeatForever(autoreverses: false)
-    }
     @EnvironmentObject var user: UserSettings
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(entity: Teacher.entity(), sortDescriptors: [])
@@ -56,7 +50,7 @@ struct TimetableView: View {
                             VStack{
                                 Text(grid.startTime ?? "")
                                 Text(grid.name ?? "")
-                                    .font(.system(size: 18, weight: .regular, design: .rounded))
+                                    .font(.system(size: 15 * CGFloat(user.scale), weight: .regular, design: .rounded))
                                 Text(grid.endTime ?? "")
                             }
                             .frame(width: UIScreen.main.bounds.width*0.13, height: CGFloat(height))
@@ -71,11 +65,11 @@ struct TimetableView: View {
                     }
                     Spacer()
                 }
-
                 let allPeriods = storedPeriods.filter({
                     let date = calendar.component(.weekOfYear, from: $0.date!) == calendar.component(.weekOfYear, from: Date())
                     let notCancelled = $0.code != "cancelled"
-                    return date && notCancelled
+                    return date
+//                        && notCancelled
                 }).sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}
                 ForEach(storedDays.filter({!$0.elements.isEmpty}).sorted{$0.number < $1.number}){ day in
                     let days = day.elements.sorted{Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!}
