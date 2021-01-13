@@ -11,8 +11,8 @@ import Combine
 import CoreData
 
 class UserSettings: ObservableObject {
+    var viewContext: NSManagedObjectContext
     //MARK: User settings
-    @Environment(\.managedObjectContext) private var viewContext
     var storedTeachers: [Teacher] = []
     var storedSubjects: [Subject] = []
     var storedBaseClasses: [BaseClass] = []
@@ -260,6 +260,7 @@ class UserSettings: ObservableObject {
             newRoom.name = room.name
         }
         try? viewContext.save()
+        fetchFromStore()
         for day in 1...7{
             if storedays.contains(where: {da in da.number == day}){
                 viewContext.delete(storedays.filter({$0.number == day})[0])
@@ -268,6 +269,7 @@ class UserSettings: ObservableObject {
             newDay.number = Int16(day)
         }
         try? viewContext.save()
+        fetchFromStore()
         if !grid.isEmpty{
             for element in storedGrid{
                 viewContext.delete(element)
@@ -308,6 +310,7 @@ class UserSettings: ObservableObject {
             newPeriod.roomsNS = NSSet.init(array: storedRooms.filter({ro in(period.ro?.contains(where: {id in ro.id == id.id}) ?? false)}))
         }
         try? viewContext.save()
+        fetchFromStore()
         for period in storedPeriods{
             var collides = 0
             for compareObj in storedPeriods.filter({$0.date == period.date}){
@@ -321,7 +324,18 @@ class UserSettings: ObservableObject {
         try? viewContext.save()
         endSession()
     }
-    init() {
+    func fetchFromStore(){
+        self.storedBaseClasses = BaseClass.all(viewContext, viewContext.persistentStoreCoordinator!)
+        self.storedays = Day.all(viewContext, viewContext.persistentStoreCoordinator!)
+        self.storedGrid = GridElement.all(viewContext, viewContext.persistentStoreCoordinator!)
+        self.storedRooms = Room.all(viewContext, viewContext.persistentStoreCoordinator!)
+        self.storedPeriods = Period.all(viewContext, viewContext.persistentStoreCoordinator!)
+        self.storedSubjects = Subject.all(viewContext, viewContext.persistentStoreCoordinator!)
+        self.storedTeachers = Teacher.all(viewContext, viewContext.persistentStoreCoordinator!)
+    }
+    init(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) {
+        self.viewContext = viewContext
+        self.viewContext.persistentStoreCoordinator = coordinator
         self.username = UserDefaults.standard.object(forKey: "username") as? String ?? ""
         self.password = UserDefaults.standard.object(forKey: "password") as? String ?? ""
         self.sessionId = UserDefaults.standard.object(forKey: "sessionId") as? String ?? ""
@@ -331,13 +345,13 @@ class UserSettings: ObservableObject {
         self.loggedIn = UserDefaults.standard.object(forKey: "loggedIn") as? Bool ?? false
         self.lastQuery = UserDefaults.standard.object(forKey: "lastQuery") as? Date? ?? nil
         self.scale = UserDefaults.standard.object(forKey: "scale") as? Double ?? 1
-        self.storedBaseClasses = BaseClass.all(viewContext)
-        self.storedays = Day.all(viewContext)
-        self.storedGrid = GridElement.all(viewContext)
-        self.storedRooms = Room.all(viewContext)
-        self.storedPeriods = Period.all(viewContext)
-        self.storedSubjects = Subject.all(viewContext)
-        self.storedTeachers = Teacher.all(viewContext)
+        self.storedBaseClasses = BaseClass.all(viewContext, viewContext.persistentStoreCoordinator!)
+        self.storedays = Day.all(viewContext, viewContext.persistentStoreCoordinator!)
+        self.storedGrid = GridElement.all(viewContext, viewContext.persistentStoreCoordinator!)
+        self.storedRooms = Room.all(viewContext, viewContext.persistentStoreCoordinator!)
+        self.storedPeriods = Period.all(viewContext, viewContext.persistentStoreCoordinator!)
+        self.storedSubjects = Subject.all(viewContext, viewContext.persistentStoreCoordinator!)
+        self.storedTeachers = Teacher.all(viewContext, viewContext.persistentStoreCoordinator!)
     }
 }
 
@@ -520,8 +534,9 @@ protocol APIResult{
 
 
 extension BaseClass {
-    static func all(_ viewContext: NSManagedObjectContext) -> [BaseClass] {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [BaseClass] {
         let context = viewContext
+        context.persistentStoreCoordinator = coordinator
         let fetchRequest: NSFetchRequest<BaseClass> = BaseClass.fetchRequest()
         do {
             let items = try context.fetch(fetchRequest)
@@ -535,7 +550,7 @@ extension BaseClass {
 }
 
 extension Day {
-    static func all(_ viewContext: NSManagedObjectContext) -> [Day] {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [Day] {
         let context = viewContext
         let fetchRequest: NSFetchRequest<Day> = Day.fetchRequest()
         do {
@@ -550,7 +565,7 @@ extension Day {
 }
 
 extension GridElement {
-    static func all(_ viewContext: NSManagedObjectContext) -> [GridElement] {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [GridElement] {
         let context = viewContext
         let fetchRequest: NSFetchRequest<GridElement> = GridElement.fetchRequest()
         do {
@@ -565,7 +580,7 @@ extension GridElement {
 }
 
 extension Period {
-    static func all(_ viewContext: NSManagedObjectContext) -> [Period] {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [Period] {
         let context = viewContext
         let fetchRequest: NSFetchRequest<Period> = Period.fetchRequest()
         do {
@@ -580,7 +595,7 @@ extension Period {
 }
 
 extension Room {
-    static func all(_ viewContext: NSManagedObjectContext) -> [Room] {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [Room] {
         let context = viewContext
         let fetchRequest: NSFetchRequest<Room> = Room.fetchRequest()
         do {
@@ -595,7 +610,7 @@ extension Room {
 }
 
 extension Subject {
-    static func all(_ viewContext: NSManagedObjectContext) -> [Subject] {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [Subject] {
         let context = viewContext
         let fetchRequest: NSFetchRequest<Subject> = Subject.fetchRequest()
         do {
@@ -610,7 +625,7 @@ extension Subject {
 }
 
 extension Teacher {
-    static func all(_ viewContext: NSManagedObjectContext) -> [Teacher] {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [Teacher] {
         let context = viewContext
         let fetchRequest: NSFetchRequest<Teacher> = Teacher.fetchRequest()
         do {

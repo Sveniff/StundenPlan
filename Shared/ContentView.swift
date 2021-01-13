@@ -26,14 +26,12 @@ struct ContentView: View {
     var storedGrid: FetchedResults<GridElement>
     @FetchRequest(entity: Day.entity(), sortDescriptors: [])
     var storedays: FetchedResults<Day>
-    let getter = APIGetter()
     var body: some View {
         VStack{
             #if os(iOS)
-                getter
                 DashboardMobile()
                     .onAppear{
-                        getter.store()
+                        user.store()
                     }
             #endif
         }

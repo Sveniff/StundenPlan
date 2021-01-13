@@ -12,9 +12,9 @@ import Combine
 @main
 struct StundenPlanApp: App {
     let persistenceController = PersistenceController.shared
-    @ObservedObject var user = UserSettings()
+    @ObservedObject var user: UserSettings
     init() {
-        
+        user = UserSettings(persistenceController.container.viewContext, persistenceController.container.viewContext.persistentStoreCoordinator!)
         user.auth()
     }
     
