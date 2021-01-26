@@ -9,7 +9,7 @@ import SwiftUI
 
 struct Settingsview: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject var user: UserSettings
+    @EnvironmentObject var user: UserData
     @State var scale = 1.0
     var body: some View {
         ScrollView{

@@ -72,3 +72,111 @@ extension Day{
         Array(elementsNS as? Set<GridElement> ?? [])
     }
 }
+
+extension BaseClass {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [BaseClass] {
+        let context = viewContext
+        context.persistentStoreCoordinator = coordinator
+        let fetchRequest: NSFetchRequest<BaseClass> = BaseClass.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [BaseClass]()
+    }
+}
+
+extension Day {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [Day] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<Day> = Day.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [Day]()
+    }
+}
+
+extension GridElement {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [GridElement] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<GridElement> = GridElement.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [GridElement]()
+    }
+}
+
+extension Period {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [Period] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<Period> = Period.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [Period]()
+    }
+}
+
+extension Room {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [Room] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<Room> = Room.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [Room]()
+    }
+}
+
+extension Subject {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [Subject] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<Subject> = Subject.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [Subject]()
+    }
+}
+
+extension Teacher {
+    static func all(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) -> [Teacher] {
+        let context = viewContext
+        let fetchRequest: NSFetchRequest<Teacher> = Teacher.fetchRequest()
+        do {
+            let items = try context.fetch(fetchRequest)
+            return items
+        }
+        catch let error as NSError {
+            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+        }
+        return [Teacher]()
+    }
+}
+
+

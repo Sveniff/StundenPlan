@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 struct login: View {
-    @EnvironmentObject var user: UserSettings
+    @EnvironmentObject var user: UserData
     @State var name: String = ""
     @State var pass: String = ""
     @State var wrongData: Bool = false
@@ -51,7 +51,7 @@ struct login: View {
                     Button(action: {
                         user.username = name
                         user.password = pass
-                        user.auth()
+                        user.login()
                         if user.sessionId != nil{
                             wrongData = false
                             user.loggedIn = true

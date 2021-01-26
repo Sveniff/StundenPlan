@@ -11,7 +11,7 @@ import Combine
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject var user: UserSettings
+    @EnvironmentObject var user: UserData
     @FetchRequest(entity: Teacher.entity(), sortDescriptors: [])
     var storedTeachers: FetchedResults<Teacher>
     @FetchRequest(entity: Subject.entity(), sortDescriptors: [])
@@ -26,13 +26,27 @@ struct ContentView: View {
     var storedGrid: FetchedResults<GridElement>
     @FetchRequest(entity: Day.entity(), sortDescriptors: [])
     var storedays: FetchedResults<Day>
+    
+    @State private var showError = false
+    @State var error: String = ""
     var body: some View {
         VStack{
             #if os(iOS)
                 DashboardMobile()
                     .onAppear{
-                        user.store()
+                        if (user.lastQuery?.addingTimeInterval(600)) ?? Date() <= Date(){
+                            do{
+                                try user.store()
+                            }
+                            catch{
+                                self.error = error.localizedDescription
+                                self.showError = true
+                            }
+                        }
                     }
+                    .alert(isPresented: $showError, content: {
+                        Alert(title: Text("Ein Fehler ist aufgetreten"), message: Text(error), dismissButton: .cancel())
+                    })
             #endif
         }
     }

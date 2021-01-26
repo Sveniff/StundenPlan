@@ -13,6 +13,8 @@ extension Color {
     static let primaryInvert = Color("Invert")
     static let gradient_top = Color("Gradient-top")
     static let gradient_bottom = Color("Gradient-bottom")
+    static let OHGWhite = Color("OHGWhite")
+    static let OHGYellow = Color("OHGYellow")
 }
 
 func minutesBetweenDates(_ oldDate: Date, _ newDate: Date) -> CGFloat {
