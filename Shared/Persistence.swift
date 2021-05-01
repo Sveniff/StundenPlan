@@ -14,8 +14,10 @@ struct PersistenceController {
     static var preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
+        let user = UserData(viewContext, viewContext.persistentStoreCoordinator!)
         
         do {
+            user.store()
             try viewContext.save()
         } catch {
             // Replace this implementation with code to handle the error appropriately.

@@ -57,6 +57,12 @@ class UserData: ObservableObject {
             UserDefaults.standard.set(scale, forKey: "scale")
         }
     }
+    private var teachers: [APITeacher] = []
+    private var subjects: [APISubject] = []
+    private var baseClasses: [APIBaseClass] = []
+    private var periods: [APIPeriod] = []
+    private var rooms: [APIRoom] = []
+    private var grid: [APIGridElement] = []
     
     //MARK: public methods
     func login(){
@@ -66,7 +72,6 @@ class UserData: ObservableObject {
         let postData = parameters.data(using: .utf8)
         var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: Double.infinity)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=ECAD7173A723E9123ADBD05F398696B1", forHTTPHeaderField: "Cookie")
         request.httpMethod = "POST"
         request.httpBody = postData
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -102,19 +107,8 @@ class UserData: ObservableObject {
         personType = nil
         loggedIn = false
     }
-    func store() throws {
-        var teachers: [APITeacher] = []
-        var subjects: [APISubject] = []
-        var baseClasses: [APIBaseClass] = []
-        var periods: [APIPeriod] = []
-        var rooms: [APIRoom] = []
-        var grid: [APIGridElement] = []
-        teachers = try getTeachers().1!
-        subjects = try getSubjects().1!
-        baseClasses = try getKlassen().1!
-        rooms = try getRooms().1!
-        periods = try getTimetable().1!
-        grid = try getGrid().1!
+    func store() {
+        fetchFromAPI()
         for teacher in teachers{
             if storedTeachers.contains(where: {te in te.id == teacher.id}){
                 viewContext.delete(storedTeachers.filter{$0.id == teacher.id}[0])
@@ -127,7 +121,6 @@ class UserData: ObservableObject {
             newTeacher.longName = teacher.longName
             newTeacher.name = teacher.name
         }
-
         for subject in subjects{
             if storedSubjects.contains(where: {su in su.id == subject.id}){
                 viewContext.delete(storedSubjects.filter{$0.id == subject.id}[0])
@@ -139,7 +132,6 @@ class UserData: ObservableObject {
             newSubject.longName = subject.longName
             newSubject.name = subject.name
         }
-
         for baseClass in baseClasses{
             if storedBaseClasses.contains(where: {kl in kl.id == baseClass.id}){
                 viewContext.delete(storedBaseClasses.filter{$0.id == baseClass.id}[0])
@@ -155,7 +147,6 @@ class UserData: ObservableObject {
             newBaseClass.teacher2 = Int64(baseClass.teacher2!)
             }
         }
-
         for room in rooms{
             if storedRooms.contains(where: {ro in ro.id == room.id}){
                 viewContext.delete(storedRooms.filter{$0.id == room.id}[0])
@@ -167,7 +158,7 @@ class UserData: ObservableObject {
             newRoom.longName = room.longName
             newRoom.name = room.name
         }
-        try viewContext.save()
+        try? viewContext.save()
         fetchFromStore()
         for day in 1...7{
             if storedays.contains(where: {da in da.number == day}){
@@ -176,7 +167,7 @@ class UserData: ObservableObject {
             let newDay = Day(context: viewContext)
             newDay.number = Int16(day)
         }
-        try viewContext.save()
+        try? viewContext.save()
         fetchFromStore()
         if !grid.isEmpty{
             for element in storedGrid{
@@ -217,7 +208,7 @@ class UserData: ObservableObject {
             newPeriod.teachersNS = NSSet.init(array: storedTeachers.filter({te in(period.te?.contains(where: {id in te.id == id.id}) ?? false)}))
             newPeriod.roomsNS = NSSet.init(array: storedRooms.filter({ro in(period.ro?.contains(where: {id in ro.id == id.id}) ?? false)}))
         }
-        try viewContext.save()
+        try? viewContext.save()
         fetchFromStore()
         for period in storedPeriods{
             var collides = 0
@@ -229,7 +220,7 @@ class UserData: ObservableObject {
                 collides += start || end || (overlapsStart && overlapsEnd) ? 1 : 0
             }
         }
-        try viewContext.save()
+        try? viewContext.save()
         lastQuery = Date()
     }
     
@@ -244,7 +235,7 @@ class UserData: ObservableObject {
     private var storedays: [Day] = []
     
     //MARK: helper methods
-    private func getRequest<ResultType: Codable, APIType: Codable & APIResult>(method: String, params: String, _: APIType.Type, _: ResultType.Type) throws -> (Bool, [ResultType]?){
+    private func getRequest<ResultType: Codable, APIType: Codable & APIResult>(method: String, params: String, _: APIType.Type, _: ResultType.Type) -> (Bool, [ResultType]?){
         var result: APIType? //var of type that conforms to answer sent by the API
         var objects: [ResultType]?// var of objects to return
         let semaphore = DispatchSemaphore (value: 0)
@@ -255,12 +246,10 @@ class UserData: ObservableObject {
         var request = URLRequest(url: URL(string: "https://neilo.webuntis.com/WebUntis/jsonrpc.do?school=ohg-bergisch-gladbach")!,timeoutInterval: 5.0)//create request
         request.addValue("\(sessionId!)", forHTTPHeaderField: "JSSESSIONID")//add headers in fields
         request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
-        request.addValue("schoolname=\"_b2hnLWJlcmdpc2NoLWdsYWRiYWNo\"; traceId=09b751ad1fd4f0eb94caf922de4f1315da752f03; JSESSIONID=\(sessionId!)", forHTTPHeaderField: "Cookie")
-        
         request.httpMethod = "POST"
         request.httpBody = postData
 
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
         guard let data = data else {//execute if the request was succesful
             print(String(describing: error))//print error
             return
@@ -295,30 +284,30 @@ class UserData: ObservableObject {
         task.resume()
         semaphore.wait()
     }
-    private func getTeachers() throws -> (Bool, [APITeacher]?){
-        return try getRequest(method: "getTeachers", params: "", APITeacherResult.self, APITeacher.self)
+    private func getTeachers() -> (Bool, [APITeacher]?){
+        return getRequest(method: "getTeachers", params: "", APITeacherResult.self, APITeacher.self)
     }
-    private func getStudents() throws -> (Bool, [APIStudent]?){
-        return try getRequest(method: "getStudents", params: "", APIStudentResult.self, APIStudent.self)
+    private func getStudents() -> (Bool, [APIStudent]?){
+        return getRequest(method: "getStudents", params: "", APIStudentResult.self, APIStudent.self)
     }
-    private func getKlassen() throws -> (Bool,[APIBaseClass]?){
-        return try getRequest(method: "getKlassen", params: "", APIBaseClassResult.self, APIBaseClass.self)
+    private func getKlassen() -> (Bool,[APIBaseClass]?){
+        return getRequest(method: "getKlassen", params: "", APIBaseClassResult.self, APIBaseClass.self)
     }
-    private func getSubjects() throws -> (Bool, [APISubject]?){
-        return try getRequest(method: "getSubjects", params: "", APISubjectResult.self, APISubject.self)
+    private func getSubjects() -> (Bool, [APISubject]?){
+        return getRequest(method: "getSubjects", params: "", APISubjectResult.self, APISubject.self)
     }
-    private func getRooms() throws -> (Bool, [APIRoom]?){
-        return try getRequest(method: "getRooms", params: "", APIRoomResult.self, APIRoom.self)
+    private func getRooms() -> (Bool, [APIRoom]?){
+        return getRequest(method: "getRooms", params: "", APIRoomResult.self, APIRoom.self)
     }
-    private func getTimetable() throws -> (Bool, [APIPeriod]?){
+    private func getGrid() -> (Bool,[APIGridElement]?){
+        return getRequest(method: "getTimegridUnits", params: "", APIGridResult.self, APIGridElement.self)
+    }
+    private func getTimetable() -> (Bool, [APIPeriod]?){
         let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "YYYYMMdd"
                 let timeFormatter = DateFormatter()
                 timeFormatter.dateFormat = "HHmm"
-        return try getRequest(method: "getTimetable", params: "\"options\":{\"element\": {\"id\":\(personId!),\"type\":\( personType!)},\"showSubstText\":true,\"showInfo\":true,\"showLsText\":true,\"startDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: -6, to: Date())!))\",\"endDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: 6, to: Date())!))\"}", APITimetableResult.self, APIPeriod.self)
-    }
-    private func getGrid() throws -> (Bool,[APIGridElement]?){
-        return try getRequest(method: "getTimegridUnits", params: "", APIGridResult.self, APIGridElement.self)
+        return getRequest(method: "getTimetable", params: "\"options\":{\"element\": {\"id\":\(personId!),\"type\":\( personType!)},\"showSubstText\":true,\"showInfo\":true,\"showLsText\":true,\"startDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: -6, to: Date())!))\",\"endDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: 6, to: Date())!))\"}", APITimetableResult.self, APIPeriod.self)
     }
     private func fetchFromStore(){
         self.storedBaseClasses = BaseClass.all(viewContext, viewContext.persistentStoreCoordinator!)
@@ -328,6 +317,14 @@ class UserData: ObservableObject {
         self.storedPeriods = Period.all(viewContext, viewContext.persistentStoreCoordinator!)
         self.storedSubjects = Subject.all(viewContext, viewContext.persistentStoreCoordinator!)
         self.storedTeachers = Teacher.all(viewContext, viewContext.persistentStoreCoordinator!)
+    }
+    private func fetchFromAPI() {
+        teachers = getTeachers().1!
+        subjects = getSubjects().1!
+        baseClasses = getKlassen().1!
+        rooms = getRooms().1!
+        periods = getTimetable().1!
+        grid = getGrid().1!
     }
     
     //MARK: Initializer
@@ -351,128 +348,125 @@ class UserData: ObservableObject {
         self.storedSubjects = Subject.all(viewContext, viewContext.persistentStoreCoordinator!)
         self.storedTeachers = Teacher.all(viewContext, viewContext.persistentStoreCoordinator!)
     }
-}
 
+    private struct APIAuthResult: Codable {
+        var jsonrpc: String
+        var id: String
+        var result: APIAuth
+    }
+    private struct APIAuth: Codable{
+        let sessionId: String
+        let personType: Int
+        let klasseId: Int
+        let personId: Int
+    }
+    private struct APITeacherResult: Codable, APIResult{
+        let jsonrpc: String
+        let id: String
+        var result: [APITeacher]
+    }
+    private struct APITeacher: Codable{
+        let id: Int
+        let name: String
+        let foreName: String?
+        let longName: String?
+        let foreColor: String?
+        let backColor: String?
+    }
+    private struct APIStudentResult: Codable, APIResult{
+        let jsonrpc: String
+        let id: String
+        var result: [APIStudent]
+    }
+    private struct APIStudent: Codable{
+        let id: Int
+        let key: String
+        let name: String
+        let foreName: String?
+        let longName: String?
+        let gender: String?
+    }
+    private struct APIBaseClassResult: Codable, APIResult{
+        let jsonrpc: String
+        let id: String
+        var result: [APIBaseClass]
+    }
+    private struct APIBaseClass: Codable{
+        let id: Int
+        let name: String
+        let longName: String?
+        let foreColor: String?
+        let backColor: String?
+        let teacher1: Int?
+        let teacher2: Int?
+    }
+    private struct APISubjectResult: Codable, APIResult{
+        let jsonrpc: String
+        let id: String
+        var result: [APISubject]
+    }
+    private struct APISubject: Codable{
+        let id: Int
+        let name: String
+        let longName: String?
+        let alternateName: String?
+        let active: Bool?
+        let foreColor: String?
+        let backColor: String?
+    }
+    private struct APIRoomResult: Codable, APIResult{
+        let jsonrpc: String
+        let id: String
+        var result: [APIRoom]
+    }
+    private struct APIRoom: Codable{
+        let id: Int
+        let name: String
+        let longName: String?
+        let foreColor: String?
+        let backColor: String?
+    }
+    private struct APITimetableResult: Codable, APIResult{
+        let jsonrpc: String
+        let id: String
+        var result: [APIPeriod]
+    }
+    private struct APIPeriod: Codable{
+        let id: Int
+        let date: Int
+        let startTime: Int
+        let endTime: Int
+        let kl: [ID]?
+        let te: [ID]?
+        let su: [ID]?
+        let ro: [ID]?
+        let info: String?
+        let subsText: String?
+        let lstype: String?
+        let code: String?
+        let lstext: String?
+        let statflags: String?
+        let activityType: String?
+    }
 
-//MARK: API Types
-fileprivate struct APIAuthResult: Codable {
-    var jsonrpc: String
-    var id: String
-    var result: APIAuth
-
-}
-fileprivate struct APIAuth: Codable{
-    let sessionId: String
-    let personType: Int
-    let klasseId: Int
-    let personId: Int
-}
-fileprivate struct APITeacherResult: Codable, APIResult{
-    let jsonrpc: String
-    let id: String
-    var result: [APITeacher]
-}
-fileprivate struct APITeacher: Codable{
-    let id: Int
-    let name: String
-    let foreName: String?
-    let longName: String?
-    let foreColor: String?
-    let backColor: String?
-}
-fileprivate struct APIStudentResult: Codable, APIResult{
-    let jsonrpc: String
-    let id: String
-    var result: [APIStudent]
-}
-fileprivate struct APIStudent: Codable{
-    let id: Int
-    let key: String
-    let name: String
-    let foreName: String?
-    let longName: String?
-    let gender: String?
-}
-fileprivate struct APIBaseClassResult: Codable, APIResult{
-    let jsonrpc: String
-    let id: String
-    var result: [APIBaseClass]
-}
-fileprivate struct APIBaseClass: Codable{
-    let id: Int
-    let name: String
-    let longName: String?
-    let foreColor: String?
-    let backColor: String?
-    let teacher1: Int?
-    let teacher2: Int?
-}
-fileprivate struct APISubjectResult: Codable, APIResult{
-    let jsonrpc: String
-    let id: String
-    var result: [APISubject]
-}
-fileprivate struct APISubject: Codable{
-    let id: Int
-    let name: String
-    let longName: String?
-    let alternateName: String?
-    let active: Bool?
-    let foreColor: String?
-    let backColor: String?
-}
-fileprivate struct APIRoomResult: Codable, APIResult{
-    let jsonrpc: String
-    let id: String
-    var result: [APIRoom]
-}
-fileprivate struct APIRoom: Codable{
-    let id: Int
-    let name: String
-    let longName: String?
-    let foreColor: String?
-    let backColor: String?
-}
-fileprivate struct APITimetableResult: Codable, APIResult{
-    let jsonrpc: String
-    let id: String
-    var result: [APIPeriod]
-}
-fileprivate struct APIPeriod: Codable{
-    let id: Int
-    let date: Int
-    let startTime: Int
-    let endTime: Int
-    let kl: [ID]?
-    let te: [ID]?
-    let su: [ID]?
-    let ro: [ID]?
-    let info: String?
-    let subsText: String?
-    let lstype: String?
-    let code: String?
-    let lstext: String?
-    let statflags: String?
-    let activityType: String?
-}
-
-fileprivate struct APIGridResult: Codable, APIResult{
-    let jsonrpc: String
-    let id: String
-    var result: [APIGridElement]
-}
-fileprivate struct APIGridElement: Codable{
-    let day: Int
-    let timeUnits: [APITimeStamp]
-}
-fileprivate struct APITimeStamp: Codable{
-    let name: String
-    let startTime: Int
-    let endTime: Int
-}
-fileprivate struct ID: Codable{
-    let id: Int
-    let orgid: Int?
+    private struct APIGridResult: Codable, APIResult{
+        let jsonrpc: String
+        let id: String
+        var result: [APIGridElement]
+    }
+    private struct APIGridElement: Codable{
+        let day: Int
+        let timeUnits: [APITimeStamp]
+    }
+    private struct APITimeStamp: Codable{
+        let name: String
+        let startTime: Int
+        let endTime: Int
+    }
+    private struct ID: Codable{
+        let id: Int
+        let orgid: Int?
+    }
 }
 
 fileprivate protocol APIResult{

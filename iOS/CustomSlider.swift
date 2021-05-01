@@ -12,9 +12,9 @@ struct CustomSlider: View {
     @Binding var selection: Int
     var body: some View {
         VStack{
-            Spacer().frame(height:UIScreen.main.bounds.height*0.9)
+            Spacer().frame(height:UIScreen.main.bounds.height*0.85)
             HStack{
-                Spacer().frame(width:UIScreen.main.bounds.width*0.1)
+                Spacer().frame(width:UIScreen.main.bounds.width*0.03)
                 RoundedRectangle(cornerRadius: 10)
                     .frame(height:60)
                     .padding(10)
@@ -87,15 +87,14 @@ struct CustomSlider: View {
                             )
                         }
                     )
-                Spacer().frame(width:UIScreen.main.bounds.width*0.1)
+                Spacer().frame(width:UIScreen.main.bounds.width*0.03)
             }
         }
     }
 }
 
 struct CustomSlider_Previews: PreviewProvider {
-
     static var previews: some View {
-        DashboardMobile()
+        CustomSlider(selection: .constant(0))
     }
 }

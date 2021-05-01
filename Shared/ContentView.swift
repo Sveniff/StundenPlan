@@ -34,19 +34,10 @@ struct ContentView: View {
             #if os(iOS)
                 DashboardMobile()
                     .onAppear{
-                        if (user.lastQuery?.addingTimeInterval(600)) ?? Date() <= Date(){
-                            do{
-                                try user.store()
-                            }
-                            catch{
-                                self.error = error.localizedDescription
-                                self.showError = true
-                            }
+                        if (user.lastQuery?.addingTimeInterval(0)) ?? Date() <= Date(){
+                            user.store()
                         }
                     }
-                    .alert(isPresented: $showError, content: {
-                        Alert(title: Text("Ein Fehler ist aufgetreten"), message: Text(error), dismissButton: .cancel())
-                    })
             #endif
         }
     }
@@ -54,6 +45,9 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        let user = UserData(PersistenceController.preview.container.viewContext, PersistenceController.preview.container.viewContext.persistentStoreCoordinator!)
+        return ContentView()
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .environmentObject(user)
     }
 }

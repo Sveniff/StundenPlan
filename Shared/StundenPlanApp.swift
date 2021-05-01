@@ -27,7 +27,6 @@ struct StundenPlanApp: App {
             }
             else{
                 login()
-                    .preferredColorScheme(.light)
                     .environmentObject(user)
             }
         }

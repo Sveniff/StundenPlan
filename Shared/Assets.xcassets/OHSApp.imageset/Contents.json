@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "OHG_Logo_ohne_Text_4-2-2.png",
+      "filename" : "OHSPNG.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "OHSPNG-1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "OHSPNG-2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

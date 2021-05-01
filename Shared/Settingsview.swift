@@ -16,7 +16,7 @@ struct Settingsview: View {
             Spacer().frame(height: 100)
             HStack{
                 Text("scale:")
-                Slider(value: $scale, in: 0.5...2)
+                Slider(value: $scale, in: 0.5...1.5)
             }
             Spacer()
         }

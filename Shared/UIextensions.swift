@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import CoreData
 //MARK: UI extensions and functions
 extension Color {
     static let primaryInvert = Color("Invert")
@@ -15,6 +16,8 @@ extension Color {
     static let gradient_bottom = Color("Gradient-bottom")
     static let OHGWhite = Color("OHGWhite")
     static let OHGYellow = Color("OHGYellow")
+    static let OHGOrange = Color("OHGOrange")
+    static let OHGRed = Color("OHGRed")
 }
 
 func minutesBetweenDates(_ oldDate: Date, _ newDate: Date) -> CGFloat {
@@ -47,3 +50,27 @@ func hexStringToUIColor (hex:String) -> Color {
         blue: Double(rgbValue & 0x0000FF) / 255.0
     )
 }
+struct TextFieldModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .multilineTextAlignment(.center)
+            .frame(width: 250, height: 40, alignment: .center)
+            .font(.system(size: 16, weight: .regular, design: .default))
+            .overlay(RoundedRectangle(cornerRadius: 5).stroke())
+    }
+}
+
+extension View{
+    func loginTextField() -> some View{
+        self.modifier(TextFieldModifier())
+    }
+}
+
+//func shortenTimetable(periods: [Period]) -> [Period]{
+//    for i in 1...periods.count-1{
+//        if periods[i].subjects.first.id == periods[i-1].subjects.first.id{
+//            var newPeriod = periods[i]
+//
+//        }
+//    }
+//}

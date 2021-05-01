@@ -24,10 +24,6 @@ struct DashboardMobile: View {
                         .zIndex(0)
                 case 1:
                     ZStack{
-                        TimetableView()
-                            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height, alignment: .center)
-                            .fixedSize()
-                            .zIndex(0)
                         CardView()
                             .zIndex(2)
                             .transition(.move(edge: .bottom))
