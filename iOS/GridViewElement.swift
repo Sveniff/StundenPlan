@@ -27,10 +27,10 @@ struct GridViewElement: View {
                 }
                 .zIndex(1)
             }
-            .frame(width: UIScreen.main.bounds.width*0.1, height: CGFloat(height))
+            .frame(width: UIScreen.main.bounds.width*0.05, height: CGFloat(height))
             Spacer()
         }
-        .frame(width:UIScreen.main.bounds.width*0.1 ,height: height + abs(space) + 1)
+        .frame(width:UIScreen.main.bounds.width*0.05 ,height: height + abs(space) + 1)
     }
     init(_ gd: GridElement, _ s: CGFloat) {
         grid = gd

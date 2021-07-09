@@ -63,7 +63,7 @@ class UserData: ObservableObject {
     private var periods: [APIPeriod] = []
     private var rooms: [APIRoom] = []
     private var grid: [APIGridElement] = []
-    
+
     //MARK: public methods
     func login(){
         var result: APIAuthResult?
@@ -200,6 +200,7 @@ class UserData: ObservableObject {
             newPeriod.endTime!.insert(contentsOf: ":", at: newPeriod.endTime!.index(newPeriod.endTime!.endIndex, offsetBy: -2))
             newPeriod.startTime = String(period.startTime)
             newPeriod.startTime!.insert(contentsOf: ":", at: newPeriod.startTime!.index(newPeriod.startTime!.endIndex, offsetBy: -2))
+            newPeriod.collisions = Int16(periods.filter({$0.date == period.date}).filter({($0.startTime < period.endTime && $0.endTime > period.startTime)}).count)
             newPeriod.statflags = period.statflags
             newPeriod.text = period.lstext
             newPeriod.type = period.lstype
@@ -209,21 +210,9 @@ class UserData: ObservableObject {
             newPeriod.roomsNS = NSSet.init(array: storedRooms.filter({ro in(period.ro?.contains(where: {id in ro.id == id.id}) ?? false)}))
         }
         try? viewContext.save()
-        fetchFromStore()
-        for period in storedPeriods{
-            var collides = 0
-            for compareObj in storedPeriods.filter({$0.date == period.date}){
-                let start = Int16(period.startTime!.replacingOccurrences(of: ":", with: ""))!+1..<(Int16(period.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16(compareObj.startTime!.replacingOccurrences(of: ":", with: ""))!
-                let end = Int16(period.startTime!.replacingOccurrences(of: ":", with: ""))!+1..<(Int16(period.endTime!.replacingOccurrences(of: ":", with: ""))!) ~= Int16(compareObj.endTime!.replacingOccurrences(of: ":", with: ""))!
-                let overlapsStart = Int16(compareObj.startTime!.replacingOccurrences(of: ":", with: ""))! < Int16(period.startTime!.replacingOccurrences(of: ":", with: ""))!
-                let overlapsEnd = Int16(period.endTime!.replacingOccurrences(of: ":", with: ""))! < Int16(compareObj.endTime!.replacingOccurrences(of: ":", with: ""))!
-                collides += start || end || (overlapsStart && overlapsEnd) ? 1 : 0
-            }
-        }
-        try? viewContext.save()
         lastQuery = Date()
     }
-    
+
     //MARK: private member
     private var viewContext: NSManagedObjectContext
     private var storedTeachers: [Teacher] = []
@@ -233,7 +222,7 @@ class UserData: ObservableObject {
     private var storedRooms: [Room] = []
     private var storedGrid: [GridElement] = []
     private var storedays: [Day] = []
-    
+
     //MARK: helper methods
     private func getRequest<ResultType: Codable, APIType: Codable & APIResult>(method: String, params: String, _: APIType.Type, _: ResultType.Type) -> (Bool, [ResultType]?){
         var result: APIType? //var of type that conforms to answer sent by the API
@@ -307,7 +296,7 @@ class UserData: ObservableObject {
                 dateFormatter.dateFormat = "YYYYMMdd"
                 let timeFormatter = DateFormatter()
                 timeFormatter.dateFormat = "HHmm"
-        return getRequest(method: "getTimetable", params: "\"options\":{\"element\": {\"id\":\(personId!),\"type\":\( personType!)},\"showSubstText\":true,\"showInfo\":true,\"showLsText\":true,\"startDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: -6, to: Date())!))\",\"endDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: 6, to: Date())!))\"}", APITimetableResult.self, APIPeriod.self)
+        return getRequest(method: "getTimetable", params: "\"options\":{\"element\": {\"id\":\(personId!),\"type\":\( personType!)},\"showSubstText\":true,\"showInfo\":true,\"showLsText\":true,\"startDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: -14, to: Date())!))\",\"endDate\":\"\(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: 6, to: Date())!))\"}", APITimetableResult.self, APIPeriod.self)
     }
     private func fetchFromStore(){
         self.storedBaseClasses = BaseClass.all(viewContext, viewContext.persistentStoreCoordinator!)
@@ -326,7 +315,7 @@ class UserData: ObservableObject {
         periods = getTimetable().1!
         grid = getGrid().1!
     }
-    
+
     //MARK: Initializer
     init(_ viewContext: NSManagedObjectContext,_ coordinator: NSPersistentStoreCoordinator) {
         self.viewContext = viewContext

@@ -19,6 +19,20 @@
 		1849054524F519B30048211D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1849051624F519B30048211D /* Assets.xcassets */; };
 		1849054624F519B30048211D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1849051624F519B30048211D /* Assets.xcassets */; };
 		186AE5B325078BCA00EDDCBA /* Stundenplan.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1849051124F519B30048211D /* Stundenplan.xcdatamodeld */; };
+		18773EBF264BC0AB006AFE71 /* VIPER.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773EBE264BC0AB006AFE71 /* VIPER.swift */; };
+		18773EC0264BC0AB006AFE71 /* VIPER.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773EBE264BC0AB006AFE71 /* VIPER.swift */; };
+		18773EC2264BC0D1006AFE71 /* ContentViewModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773EC1264BC0D1006AFE71 /* ContentViewModule.swift */; };
+		18773EC3264BC0D1006AFE71 /* ContentViewModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773EC1264BC0D1006AFE71 /* ContentViewModule.swift */; };
+		18773EC5264BC1AC006AFE71 /* ContentViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773EC4264BC1AC006AFE71 /* ContentViewPresenter.swift */; };
+		18773EC6264BC1AC006AFE71 /* ContentViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773EC4264BC1AC006AFE71 /* ContentViewPresenter.swift */; };
+		18773EC8264BC261006AFE71 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773EC7264BC261006AFE71 /* ContentViewModel.swift */; };
+		18773EC9264BC261006AFE71 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773EC7264BC261006AFE71 /* ContentViewModel.swift */; };
+		18773ECD264BC362006AFE71 /* ContentViewEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773ECC264BC362006AFE71 /* ContentViewEnvironment.swift */; };
+		18773ECE264BC362006AFE71 /* ContentViewEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773ECC264BC362006AFE71 /* ContentViewEnvironment.swift */; };
+		18773ED0264BC489006AFE71 /* ContentViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773ECF264BC489006AFE71 /* ContentViewRouter.swift */; };
+		18773ED1264BC489006AFE71 /* ContentViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773ECF264BC489006AFE71 /* ContentViewRouter.swift */; };
+		18773ED3264BC53D006AFE71 /* ContentViewInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773ED2264BC53D006AFE71 /* ContentViewInteractor.swift */; };
+		18773ED4264BC53D006AFE71 /* ContentViewInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773ED2264BC53D006AFE71 /* ContentViewInteractor.swift */; };
 		1889566924FD24D700BFE5CC /* login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1889566824FD24D700BFE5CC /* login.swift */; };
 		1889566A24FD24D700BFE5CC /* login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1889566824FD24D700BFE5CC /* login.swift */; };
 		188A31E0252471860048606F /* DashboardMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188A31DF252471860048606F /* DashboardMobile.swift */; };
@@ -74,6 +88,13 @@
 		1849053624F519B30048211D /* Tests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1849053A24F519B30048211D /* Tests_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOS.swift; sourceTree = "<group>"; };
 		1849053C24F519B30048211D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		18773EBE264BC0AB006AFE71 /* VIPER.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VIPER.swift; sourceTree = "<group>"; };
+		18773EC1264BC0D1006AFE71 /* ContentViewModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModule.swift; sourceTree = "<group>"; };
+		18773EC4264BC1AC006AFE71 /* ContentViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewPresenter.swift; sourceTree = "<group>"; };
+		18773EC7264BC261006AFE71 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
+		18773ECC264BC362006AFE71 /* ContentViewEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewEnvironment.swift; sourceTree = "<group>"; };
+		18773ECF264BC489006AFE71 /* ContentViewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewRouter.swift; sourceTree = "<group>"; };
+		18773ED2264BC53D006AFE71 /* ContentViewInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewInteractor.swift; sourceTree = "<group>"; };
 		1889566824FD24D700BFE5CC /* login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = login.swift; sourceTree = "<group>"; };
 		188A31DF252471860048606F /* DashboardMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardMobile.swift; sourceTree = "<group>"; };
 		188DAAF424F6522200A1D93C /* APIConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConnection.swift; sourceTree = "<group>"; };
@@ -119,6 +140,44 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		18062BFE2648184B00A1D0B6 /* ContentView */ = {
+			isa = PBXGroup;
+			children = (
+				1849051424F519B30048211D /* ContentView.swift */,
+				18773EC4264BC1AC006AFE71 /* ContentViewPresenter.swift */,
+				18773EC1264BC0D1006AFE71 /* ContentViewModule.swift */,
+				18773ECC264BC362006AFE71 /* ContentViewEnvironment.swift */,
+				18773EC7264BC261006AFE71 /* ContentViewModel.swift */,
+				18773ECF264BC489006AFE71 /* ContentViewRouter.swift */,
+				18773ED2264BC53D006AFE71 /* ContentViewInteractor.swift */,
+			);
+			path = ContentView;
+			sourceTree = "<group>";
+		};
+		18062BFF2648185600A1D0B6 /* Settingsview */ = {
+			isa = PBXGroup;
+			children = (
+				18C782562577A0DA00D08D0D /* Settingsview.swift */,
+			);
+			path = Settingsview;
+			sourceTree = "<group>";
+		};
+		18062C002648186000A1D0B6 /* login */ = {
+			isa = PBXGroup;
+			children = (
+				1889566824FD24D700BFE5CC /* login.swift */,
+			);
+			path = login;
+			sourceTree = "<group>";
+		};
+		18062C012648186D00A1D0B6 /* TimetableView */ = {
+			isa = PBXGroup;
+			children = (
+				18D217ED252C53DE00A3EF01 /* TimetableView.swift */,
+			);
+			path = TimetableView;
+			sourceTree = "<group>";
+		};
 		1849050B24F519B30048211D = {
 			isa = PBXGroup;
 			children = (
@@ -136,17 +195,16 @@
 			isa = PBXGroup;
 			children = (
 				1849051324F519B30048211D /* StundenPlanApp.swift */,
-				1849051424F519B30048211D /* ContentView.swift */,
-				18C782562577A0DA00D08D0D /* Settingsview.swift */,
-				1889566824FD24D700BFE5CC /* login.swift */,
-				18D217ED252C53DE00A3EF01 /* TimetableView.swift */,
-				1849051524F519B30048211D /* Persistence.swift */,
+				18062BFE2648184B00A1D0B6 /* ContentView */,
+				18062BFF2648185600A1D0B6 /* Settingsview */,
+				18062C002648186000A1D0B6 /* login */,
+				18062C012648186D00A1D0B6 /* TimetableView */,
 				188DAAF424F6522200A1D93C /* APIConnection.swift */,
+				1849051524F519B30048211D /* Persistence.swift */,
 				18D217F8252C64CF00A3EF01 /* UIextensions.swift */,
-				18C28B6325C0DF5A00B92F8E /* GridViewElement.swift */,
-				18C28B5C25C0D75000B92F8E /* PeriodView.swift */,
 				1849051624F519B30048211D /* Assets.xcassets */,
 				1849051124F519B30048211D /* Stundenplan.xcdatamodeld */,
+				18773EBE264BC0AB006AFE71 /* VIPER.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -167,6 +225,8 @@
 			children = (
 				1849051E24F519B30048211D /* Info.plist */,
 				188A31DF252471860048606F /* DashboardMobile.swift */,
+				18C28B6325C0DF5A00B92F8E /* GridViewElement.swift */,
+				18C28B5C25C0D75000B92F8E /* PeriodView.swift */,
 				18DF00AC25AF33ED00FBB0BC /* CustomSlider.swift */,
 				18DF00A525AF32C300FBB0BC /* CardView.swift */,
 			);
@@ -358,19 +418,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				18D217EE252C53DE00A3EF01 /* TimetableView.swift in Sources */,
+				18773ECD264BC362006AFE71 /* ContentViewEnvironment.swift in Sources */,
 				18C782572577A0DA00D08D0D /* Settingsview.swift in Sources */,
 				1849053F24F519B30048211D /* StundenPlanApp.swift in Sources */,
 				18C28B6425C0DF5A00B92F8E /* GridViewElement.swift in Sources */,
 				1889566924FD24D700BFE5CC /* login.swift in Sources */,
+				18773EBF264BC0AB006AFE71 /* VIPER.swift in Sources */,
 				18C28B5D25C0D75000B92F8E /* PeriodView.swift in Sources */,
 				188DAAF524F6522200A1D93C /* APIConnection.swift in Sources */,
+				18773ED3264BC53D006AFE71 /* ContentViewInteractor.swift in Sources */,
+				18773ED0264BC489006AFE71 /* ContentViewRouter.swift in Sources */,
+				18773EC5264BC1AC006AFE71 /* ContentViewPresenter.swift in Sources */,
 				1849054324F519B30048211D /* Persistence.swift in Sources */,
 				1849053D24F519B30048211D /* Stundenplan.xcdatamodeld in Sources */,
 				18DF00AD25AF33ED00FBB0BC /* CustomSlider.swift in Sources */,
 				188A31E0252471860048606F /* DashboardMobile.swift in Sources */,
 				18D217F9252C64CF00A3EF01 /* UIextensions.swift in Sources */,
+				18773EC8264BC261006AFE71 /* ContentViewModel.swift in Sources */,
 				18DF00A625AF32C300FBB0BC /* CardView.swift in Sources */,
 				1849054124F519B30048211D /* ContentView.swift in Sources */,
+				18773EC2264BC0D1006AFE71 /* ContentViewModule.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,16 +448,23 @@
 				186AE5B325078BCA00EDDCBA /* Stundenplan.xcdatamodeld in Sources */,
 				18C28B5E25C0D75000B92F8E /* PeriodView.swift in Sources */,
 				18D217EF252C53DE00A3EF01 /* TimetableView.swift in Sources */,
+				18773EC9264BC261006AFE71 /* ContentViewModel.swift in Sources */,
+				18773EC6264BC1AC006AFE71 /* ContentViewPresenter.swift in Sources */,
 				18DF00AE25AF33ED00FBB0BC /* CustomSlider.swift in Sources */,
 				1849054024F519B30048211D /* StundenPlanApp.swift in Sources */,
+				18773EC3264BC0D1006AFE71 /* ContentViewModule.swift in Sources */,
 				18D217FA252C64CF00A3EF01 /* UIextensions.swift in Sources */,
 				18C28B6525C0DF5A00B92F8E /* GridViewElement.swift in Sources */,
 				18DF00A725AF32C300FBB0BC /* CardView.swift in Sources */,
 				1889566A24FD24D700BFE5CC /* login.swift in Sources */,
 				18C782582577A0DA00D08D0D /* Settingsview.swift in Sources */,
 				188DAAF624F6522200A1D93C /* APIConnection.swift in Sources */,
+				18773ECE264BC362006AFE71 /* ContentViewEnvironment.swift in Sources */,
 				1849054424F519B30048211D /* Persistence.swift in Sources */,
+				18773EC0264BC0AB006AFE71 /* VIPER.swift in Sources */,
+				18773ED1264BC489006AFE71 /* ContentViewRouter.swift in Sources */,
 				1849054224F519B30048211D /* ContentView.swift in Sources */,
+				18773ED4264BC53D006AFE71 /* ContentViewInteractor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

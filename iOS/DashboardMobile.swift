@@ -21,25 +21,27 @@ struct DashboardMobile: View {
                     Color.primaryInvert
                         .transition(.opacity)
                         .edgesIgnoringSafeArea(.all)
-                        .zIndex(0)
+                        .zIndex(1)
                 case 1:
-                    ZStack{
-                        CardView()
-                            .zIndex(2)
-                            .transition(.move(edge: .bottom))
-                    }
+                    TimetableView()
+                        .zIndex(0)
+                        .transition(.opacity)
+                    CardView()
+                        .transition(.move(edge: .bottom))
+                        .zIndex(1)
+
                 case 2:
                     Settingsview()
                         .transition(.opacity)
                         .edgesIgnoringSafeArea(.all)
-                        .zIndex(0)
+                        .zIndex(1)
                 default:
                     EmptyView()
                 }
             }
             .zIndex(0)
             CustomSlider(selection: $selection)
-                .zIndex(1)
+                .zIndex(2)
         }
     }
 }
