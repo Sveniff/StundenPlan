@@ -44,12 +44,12 @@ class UserData: ObservableObject {
     }
     @Published var personId: Int?{
         didSet {
-            UserDefaults.standard.set(personId, forKey: "personType")
+            UserDefaults.standard.set(personId, forKey: "personId")
         }
     }
     @Published var klasseId: Int?{
         didSet {
-            UserDefaults.standard.set(klasseId, forKey: "personType")
+            UserDefaults.standard.set(klasseId, forKey: "klasseId")
         }
     }
     @Published var scale: Double{
@@ -200,7 +200,6 @@ class UserData: ObservableObject {
             newPeriod.endTime!.insert(contentsOf: ":", at: newPeriod.endTime!.index(newPeriod.endTime!.endIndex, offsetBy: -2))
             newPeriod.startTime = String(period.startTime)
             newPeriod.startTime!.insert(contentsOf: ":", at: newPeriod.startTime!.index(newPeriod.startTime!.endIndex, offsetBy: -2))
-            newPeriod.collisions = Int16(periods.filter({$0.date == period.date}).filter({($0.startTime < period.endTime && $0.endTime > period.startTime)}).count)
             newPeriod.statflags = period.statflags
             newPeriod.text = period.lstext
             newPeriod.type = period.lstype

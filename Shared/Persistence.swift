@@ -29,7 +29,7 @@ struct PersistenceController {
     let container: NSPersistentCloudKitContainer
 
     init(inMemory: Bool = false) {
-        container = NSPersistentCloudKitContainer(name: "Stundenplan")
+        container = NSPersistentCloudKitContainer(name: "Database")
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
@@ -72,7 +72,7 @@ extension BaseClass {
             return items
         }
         catch let error as NSError {
-            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+            print("Error : \(error.localizedDescription), \(error.userInfo)")
         }
         return [BaseClass]()
     }
@@ -87,7 +87,7 @@ extension Day {
             return items
         }
         catch let error as NSError {
-            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+            print("Error : \(error.localizedDescription), \(error.userInfo)")
         }
         return [Day]()
     }
@@ -102,7 +102,7 @@ extension GridElement {
             return items
         }
         catch let error as NSError {
-            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+            print("Error : \(error.localizedDescription), \(error.userInfo)")
         }
         return [GridElement]()
     }
@@ -117,7 +117,7 @@ extension Period {
             return items
         }
         catch let error as NSError {
-            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+            print("Error : \(error.localizedDescription), \(error.userInfo)")
         }
         return [Period]()
     }
@@ -132,7 +132,7 @@ extension Room {
             return items
         }
         catch let error as NSError {
-            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+            print("Error : \(error.localizedDescription), \(error.userInfo)")
         }
         return [Room]()
     }
@@ -147,7 +147,7 @@ extension Subject {
             return items
         }
         catch let error as NSError {
-            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+            print("Error : \(error.localizedDescription), \(error.userInfo)")
         }
         return [Subject]()
     }
@@ -162,7 +162,7 @@ extension Teacher {
             return items
         }
         catch let error as NSError {
-            print("Error getting ShoppingItems: \(error.localizedDescription), \(error.userInfo)")
+            print("Error : \(error.localizedDescription), \(error.userInfo)")
         }
         return [Teacher]()
     }

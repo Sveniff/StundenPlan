@@ -9,7 +9,8 @@
 import Combine
 import SwiftUI
 
-final class ContentViewViewModel: ObservableObject {
+final class TimetableViewViewModel: ObservableObject {
 
     let objectWillChange = ObservableObjectPublisher()
+
 }

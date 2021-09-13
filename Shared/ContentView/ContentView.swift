@@ -10,6 +10,7 @@ import CoreData
 import Combine
 
 struct ContentView: ViewInterface, View {
+    @Environment(\.managedObjectContext) var managedObjectContext
     var presenter: ContentViewPresenterViewInterface!
     @EnvironmentObject var env: ContentViewEnvironment
     @ObservedObject var viewModel: ContentViewViewModel

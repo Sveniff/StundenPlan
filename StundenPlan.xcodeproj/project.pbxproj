@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1849053024F519B30048211D /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1849052F24F519B30048211D /* Tests_iOS.swift */; };
 		1849053B24F519B30048211D /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1849053A24F519B30048211D /* Tests_macOS.swift */; };
-		1849053D24F519B30048211D /* Stundenplan.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1849051124F519B30048211D /* Stundenplan.xcdatamodeld */; };
 		1849053F24F519B30048211D /* StundenPlanApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1849051324F519B30048211D /* StundenPlanApp.swift */; };
 		1849054024F519B30048211D /* StundenPlanApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1849051324F519B30048211D /* StundenPlanApp.swift */; };
 		1849054124F519B30048211D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1849051424F519B30048211D /* ContentView.swift */; };
@@ -18,7 +17,6 @@
 		1849054424F519B30048211D /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1849051524F519B30048211D /* Persistence.swift */; };
 		1849054524F519B30048211D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1849051624F519B30048211D /* Assets.xcassets */; };
 		1849054624F519B30048211D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1849051624F519B30048211D /* Assets.xcassets */; };
-		186AE5B325078BCA00EDDCBA /* Stundenplan.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1849051124F519B30048211D /* Stundenplan.xcdatamodeld */; };
 		18773EBF264BC0AB006AFE71 /* VIPER.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773EBE264BC0AB006AFE71 /* VIPER.swift */; };
 		18773EC0264BC0AB006AFE71 /* VIPER.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773EBE264BC0AB006AFE71 /* VIPER.swift */; };
 		18773EC2264BC0D1006AFE71 /* ContentViewModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18773EC1264BC0D1006AFE71 /* ContentViewModule.swift */; };
@@ -36,12 +34,24 @@
 		1889566924FD24D700BFE5CC /* login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1889566824FD24D700BFE5CC /* login.swift */; };
 		1889566A24FD24D700BFE5CC /* login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1889566824FD24D700BFE5CC /* login.swift */; };
 		188A31E0252471860048606F /* DashboardMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188A31DF252471860048606F /* DashboardMobile.swift */; };
+		188C540926EFB899003DE768 /* Database.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 188C540726EFB899003DE768 /* Database.xcdatamodeld */; };
+		188C540A26EFB899003DE768 /* Database.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 188C540726EFB899003DE768 /* Database.xcdatamodeld */; };
 		188DAAF524F6522200A1D93C /* APIConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188DAAF424F6522200A1D93C /* APIConnection.swift */; };
 		188DAAF624F6522200A1D93C /* APIConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188DAAF424F6522200A1D93C /* APIConnection.swift */; };
 		18C28B5D25C0D75000B92F8E /* PeriodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C28B5C25C0D75000B92F8E /* PeriodView.swift */; };
 		18C28B5E25C0D75000B92F8E /* PeriodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C28B5C25C0D75000B92F8E /* PeriodView.swift */; };
-		18C28B6425C0DF5A00B92F8E /* GridViewElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C28B6325C0DF5A00B92F8E /* GridViewElement.swift */; };
-		18C28B6525C0DF5A00B92F8E /* GridViewElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C28B6325C0DF5A00B92F8E /* GridViewElement.swift */; };
+		18C3789526EE14D300A11B07 /* TimetableViewEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C3788F26EE14D300A11B07 /* TimetableViewEnvironment.swift */; };
+		18C3789626EE14D300A11B07 /* TimetableViewEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C3788F26EE14D300A11B07 /* TimetableViewEnvironment.swift */; };
+		18C3789726EE14D300A11B07 /* TimetableViewInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C3789026EE14D300A11B07 /* TimetableViewInteractor.swift */; };
+		18C3789826EE14D300A11B07 /* TimetableViewInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C3789026EE14D300A11B07 /* TimetableViewInteractor.swift */; };
+		18C3789926EE14D300A11B07 /* TimetableViewModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C3789126EE14D300A11B07 /* TimetableViewModule.swift */; };
+		18C3789A26EE14D300A11B07 /* TimetableViewModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C3789126EE14D300A11B07 /* TimetableViewModule.swift */; };
+		18C3789B26EE14D300A11B07 /* TimetableViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C3789226EE14D300A11B07 /* TimetableViewPresenter.swift */; };
+		18C3789C26EE14D300A11B07 /* TimetableViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C3789226EE14D300A11B07 /* TimetableViewPresenter.swift */; };
+		18C3789D26EE14D300A11B07 /* TimetableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C3789326EE14D300A11B07 /* TimetableViewModel.swift */; };
+		18C3789E26EE14D300A11B07 /* TimetableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C3789326EE14D300A11B07 /* TimetableViewModel.swift */; };
+		18C3789F26EE14D300A11B07 /* TimetableViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C3789426EE14D300A11B07 /* TimetableViewRouter.swift */; };
+		18C378A026EE14D300A11B07 /* TimetableViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C3789426EE14D300A11B07 /* TimetableViewRouter.swift */; };
 		18C782572577A0DA00D08D0D /* Settingsview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C782562577A0DA00D08D0D /* Settingsview.swift */; };
 		18C782582577A0DA00D08D0D /* Settingsview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C782562577A0DA00D08D0D /* Settingsview.swift */; };
 		18D217EE252C53DE00A3EF01 /* TimetableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D217ED252C53DE00A3EF01 /* TimetableView.swift */; };
@@ -72,7 +82,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1849051224F519B30048211D /* Stundenplan.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Stundenplan.xcdatamodel; sourceTree = "<group>"; };
 		1849051324F519B30048211D /* StundenPlanApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StundenPlanApp.swift; sourceTree = "<group>"; };
 		1849051424F519B30048211D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		1849051524F519B30048211D /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -97,9 +106,15 @@
 		18773ED2264BC53D006AFE71 /* ContentViewInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewInteractor.swift; sourceTree = "<group>"; };
 		1889566824FD24D700BFE5CC /* login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = login.swift; sourceTree = "<group>"; };
 		188A31DF252471860048606F /* DashboardMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardMobile.swift; sourceTree = "<group>"; };
+		188C540826EFB899003DE768 /* Database.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Database.xcdatamodel; sourceTree = "<group>"; };
 		188DAAF424F6522200A1D93C /* APIConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConnection.swift; sourceTree = "<group>"; };
 		18C28B5C25C0D75000B92F8E /* PeriodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodView.swift; sourceTree = "<group>"; };
-		18C28B6325C0DF5A00B92F8E /* GridViewElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridViewElement.swift; sourceTree = "<group>"; };
+		18C3788F26EE14D300A11B07 /* TimetableViewEnvironment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimetableViewEnvironment.swift; sourceTree = "<group>"; };
+		18C3789026EE14D300A11B07 /* TimetableViewInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimetableViewInteractor.swift; sourceTree = "<group>"; };
+		18C3789126EE14D300A11B07 /* TimetableViewModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimetableViewModule.swift; sourceTree = "<group>"; };
+		18C3789226EE14D300A11B07 /* TimetableViewPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimetableViewPresenter.swift; sourceTree = "<group>"; };
+		18C3789326EE14D300A11B07 /* TimetableViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimetableViewModel.swift; sourceTree = "<group>"; };
+		18C3789426EE14D300A11B07 /* TimetableViewRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimetableViewRouter.swift; sourceTree = "<group>"; };
 		18C782562577A0DA00D08D0D /* Settingsview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settingsview.swift; sourceTree = "<group>"; };
 		18D217ED252C53DE00A3EF01 /* TimetableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimetableView.swift; sourceTree = "<group>"; };
 		18D217F8252C64CF00A3EF01 /* UIextensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIextensions.swift; sourceTree = "<group>"; };
@@ -174,6 +189,12 @@
 			isa = PBXGroup;
 			children = (
 				18D217ED252C53DE00A3EF01 /* TimetableView.swift */,
+				18C3788F26EE14D300A11B07 /* TimetableViewEnvironment.swift */,
+				18C3789026EE14D300A11B07 /* TimetableViewInteractor.swift */,
+				18C3789326EE14D300A11B07 /* TimetableViewModel.swift */,
+				18C3789126EE14D300A11B07 /* TimetableViewModule.swift */,
+				18C3789226EE14D300A11B07 /* TimetableViewPresenter.swift */,
+				18C3789426EE14D300A11B07 /* TimetableViewRouter.swift */,
 			);
 			path = TimetableView;
 			sourceTree = "<group>";
@@ -203,7 +224,7 @@
 				1849051524F519B30048211D /* Persistence.swift */,
 				18D217F8252C64CF00A3EF01 /* UIextensions.swift */,
 				1849051624F519B30048211D /* Assets.xcassets */,
-				1849051124F519B30048211D /* Stundenplan.xcdatamodeld */,
+				188C540726EFB899003DE768 /* Database.xcdatamodeld */,
 				18773EBE264BC0AB006AFE71 /* VIPER.swift */,
 			);
 			path = Shared;
@@ -225,7 +246,6 @@
 			children = (
 				1849051E24F519B30048211D /* Info.plist */,
 				188A31DF252471860048606F /* DashboardMobile.swift */,
-				18C28B6325C0DF5A00B92F8E /* GridViewElement.swift */,
 				18C28B5C25C0D75000B92F8E /* PeriodView.swift */,
 				18DF00AC25AF33ED00FBB0BC /* CustomSlider.swift */,
 				18DF00A525AF32C300FBB0BC /* CardView.swift */,
@@ -418,11 +438,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				18D217EE252C53DE00A3EF01 /* TimetableView.swift in Sources */,
+				18C3789926EE14D300A11B07 /* TimetableViewModule.swift in Sources */,
+				18C3789D26EE14D300A11B07 /* TimetableViewModel.swift in Sources */,
 				18773ECD264BC362006AFE71 /* ContentViewEnvironment.swift in Sources */,
 				18C782572577A0DA00D08D0D /* Settingsview.swift in Sources */,
 				1849053F24F519B30048211D /* StundenPlanApp.swift in Sources */,
-				18C28B6425C0DF5A00B92F8E /* GridViewElement.swift in Sources */,
 				1889566924FD24D700BFE5CC /* login.swift in Sources */,
+				18C3789F26EE14D300A11B07 /* TimetableViewRouter.swift in Sources */,
 				18773EBF264BC0AB006AFE71 /* VIPER.swift in Sources */,
 				18C28B5D25C0D75000B92F8E /* PeriodView.swift in Sources */,
 				188DAAF524F6522200A1D93C /* APIConnection.swift in Sources */,
@@ -430,12 +452,15 @@
 				18773ED0264BC489006AFE71 /* ContentViewRouter.swift in Sources */,
 				18773EC5264BC1AC006AFE71 /* ContentViewPresenter.swift in Sources */,
 				1849054324F519B30048211D /* Persistence.swift in Sources */,
-				1849053D24F519B30048211D /* Stundenplan.xcdatamodeld in Sources */,
+				18C3789526EE14D300A11B07 /* TimetableViewEnvironment.swift in Sources */,
 				18DF00AD25AF33ED00FBB0BC /* CustomSlider.swift in Sources */,
 				188A31E0252471860048606F /* DashboardMobile.swift in Sources */,
+				18C3789B26EE14D300A11B07 /* TimetableViewPresenter.swift in Sources */,
 				18D217F9252C64CF00A3EF01 /* UIextensions.swift in Sources */,
 				18773EC8264BC261006AFE71 /* ContentViewModel.swift in Sources */,
+				188C540926EFB899003DE768 /* Database.xcdatamodeld in Sources */,
 				18DF00A625AF32C300FBB0BC /* CardView.swift in Sources */,
+				18C3789726EE14D300A11B07 /* TimetableViewInteractor.swift in Sources */,
 				1849054124F519B30048211D /* ContentView.swift in Sources */,
 				18773EC2264BC0D1006AFE71 /* ContentViewModule.swift in Sources */,
 			);
@@ -445,25 +470,30 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				186AE5B325078BCA00EDDCBA /* Stundenplan.xcdatamodeld in Sources */,
+				18C378A026EE14D300A11B07 /* TimetableViewRouter.swift in Sources */,
 				18C28B5E25C0D75000B92F8E /* PeriodView.swift in Sources */,
 				18D217EF252C53DE00A3EF01 /* TimetableView.swift in Sources */,
 				18773EC9264BC261006AFE71 /* ContentViewModel.swift in Sources */,
+				18C3789626EE14D300A11B07 /* TimetableViewEnvironment.swift in Sources */,
 				18773EC6264BC1AC006AFE71 /* ContentViewPresenter.swift in Sources */,
 				18DF00AE25AF33ED00FBB0BC /* CustomSlider.swift in Sources */,
 				1849054024F519B30048211D /* StundenPlanApp.swift in Sources */,
 				18773EC3264BC0D1006AFE71 /* ContentViewModule.swift in Sources */,
 				18D217FA252C64CF00A3EF01 /* UIextensions.swift in Sources */,
-				18C28B6525C0DF5A00B92F8E /* GridViewElement.swift in Sources */,
 				18DF00A725AF32C300FBB0BC /* CardView.swift in Sources */,
 				1889566A24FD24D700BFE5CC /* login.swift in Sources */,
+				18C3789C26EE14D300A11B07 /* TimetableViewPresenter.swift in Sources */,
 				18C782582577A0DA00D08D0D /* Settingsview.swift in Sources */,
 				188DAAF624F6522200A1D93C /* APIConnection.swift in Sources */,
+				18C3789A26EE14D300A11B07 /* TimetableViewModule.swift in Sources */,
 				18773ECE264BC362006AFE71 /* ContentViewEnvironment.swift in Sources */,
+				18C3789826EE14D300A11B07 /* TimetableViewInteractor.swift in Sources */,
 				1849054424F519B30048211D /* Persistence.swift in Sources */,
 				18773EC0264BC0AB006AFE71 /* VIPER.swift in Sources */,
 				18773ED1264BC489006AFE71 /* ContentViewRouter.swift in Sources */,
 				1849054224F519B30048211D /* ContentView.swift in Sources */,
+				18C3789E26EE14D300A11B07 /* TimetableViewModel.swift in Sources */,
+				188C540A26EFB899003DE768 /* Database.xcdatamodeld in Sources */,
 				18773ED4264BC53D006AFE71 /* ContentViewInteractor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -551,7 +581,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -606,7 +636,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -852,13 +882,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		1849051124F519B30048211D /* Stundenplan.xcdatamodeld */ = {
+		188C540726EFB899003DE768 /* Database.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				1849051224F519B30048211D /* Stundenplan.xcdatamodel */,
+				188C540826EFB899003DE768 /* Database.xcdatamodel */,
 			);
-			currentVersion = 1849051224F519B30048211D /* Stundenplan.xcdatamodel */;
-			path = Stundenplan.xcdatamodeld;
+			currentVersion = 188C540826EFB899003DE768 /* Database.xcdatamodel */;
+			path = Database.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

@@ -8,11 +8,8 @@ import CoreData
 import SwiftUI
 import Combine
 
-struct TimetableView: View {
-    @EnvironmentObject var user: UserData
-    @Environment(\.managedObjectContext) private var viewContext
-    @FetchRequest(entity: Teacher.entity(), sortDescriptors: [])
-    var storedTeachers: FetchedResults<Teacher>
+struct TimetableView: View, ViewInterface {
+    @Environment(\.managedObjectContext) var managedObjectContext
     @FetchRequest(entity: Subject.entity(), sortDescriptors: [])
     var storedSubjects: FetchedResults<Subject>
     @FetchRequest(entity: BaseClass.entity(), sortDescriptors: [])
@@ -25,9 +22,16 @@ struct TimetableView: View {
     var storedGrid: FetchedResults<GridElement>
     @FetchRequest(entity: Day.entity(), sortDescriptors: [])
     var storedDays: FetchedResults<Day>
+    var presenter: TimetableViewPresenterViewInterface!
+    @EnvironmentObject var env: TimetableViewEnvironment
+    @ObservedObject var viewModel: TimetableViewViewModel
+
     let TF = DateFormatter()
     var calendar = Calendar(identifier: Calendar.Identifier.gregorian)
-    init(){
+    
+    init(presenter: TimetableViewPresenterViewInterface, viewModel: TimetableViewViewModel){
+        self.presenter = presenter
+        self.viewModel = viewModel
         TF.dateFormat = "H:mm"
         calendar.firstWeekday = 7
         self.calendar.locale = Locale(identifier: "de_DE")
@@ -36,19 +40,6 @@ struct TimetableView: View {
     var body: some View {
         ScrollView{
             HStack{
-                VStack{
-                    let days = storedDays.isEmpty ? nil : storedDays[2].elements.sorted{
-                        Int($0.startTime!.replacingOccurrences(of: ":", with: ""))! < Int($1.startTime!.replacingOccurrences(of: ":", with: ""))!
-                    }
-                    Spacer()
-                        .frame(height: 100)
-                    ForEach(days ?? []){ grid in
-                        let space = minutesBetweenDates(TF.date(from: grid.endTime!)!, TF.date(from: days![days!.firstIndex(of: grid)! < days!.count - 1 ? days!.firstIndex(of: grid)! + 1 : days!.count - 1].startTime!)!) * CGFloat(user.scale)
-                        GridViewElement(grid, space)
-                    }
-                    Spacer()
-                }
-                .font(.system(size: 5.5 * CGFloat(user.scale), weight: .regular, design: .rounded))
                 let allPeriods = storedPeriods.filter({
                     let date = calendar.component(.weekOfYear, from: $0.date!) == calendar.component(.weekOfYear, from: Date())
                     //let cancelled = $0.code == "cancelled"
@@ -61,10 +52,13 @@ struct TimetableView: View {
                             .frame(height:85)
                             .multilineTextAlignment(.center)
                             .font(.system(size: 23, weight: .semibold, design: .rounded))
-                            let rows = allDayPeriods.map({$0.collisions}).max()
-                        ForEach(allDayPeriods){ period in
-                            let space = minutesBetweenDates(TF.date(from: period.endTime!)!, TF.date(from: allDayPeriods[allDayPeriods.firstIndex(of: period)! < allDayPeriods.count - 1 ? allDayPeriods.firstIndex(of: period)! + 1 : allDayPeriods.count - 1].startTime!)!) * CGFloat(user.scale)
-                            PeriodView(period, space)
+                        ForEach(storedGrid){ grid in
+                            let space = minutesBetweenDates(TF.date(from: grid.endTime!)!, TF.date(from: storedGrid[storedGrid.firstIndex(of: grid)! < storedGrid.count - 1 ? storedGrid.firstIndex(of: grid)! + 1 : storedGrid.count - 1].startTime!)!) * CGFloat(env.user.scale)
+                            HStack{
+                                ForEach(allDayPeriods.filter({$0.startTime! <= grid.endTime! && $0.endTime! >= grid.startTime!})){ period in
+                                    PeriodView(period)
+                                }
+                            }
                         }
                         if allDayPeriods.count == 0{
                             EmptyView()
@@ -79,8 +73,10 @@ struct TimetableView: View {
 
 struct TimetableView_Previews: PreviewProvider {
     static var previews: some View {
-        return TimetableView()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        let presenter = TimetableViewPresenter()
+        let viewModel = TimetableViewViewModel()
+        presenter.viewModel = viewModel
+        return TimetableView(presenter: presenter, viewModel: viewModel)
     }
 }
 

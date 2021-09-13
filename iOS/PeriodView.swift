@@ -10,7 +10,6 @@ import SwiftUI
 struct PeriodView: View {
     @EnvironmentObject var user: UserData
     var period: Period
-    var space: CGFloat
     let TF = DateFormatter()
     var body: some View {
         let height = minutesBetweenDates(TF.date(from: period.startTime!)!, TF.date(from: period.endTime!)!) * CGFloat(user.scale)
@@ -52,19 +51,18 @@ struct PeriodView: View {
             .frame(width: UIScreen.main.bounds.width*0.145, height: CGFloat(height))
             Spacer()
         }
-        .frame(width: UIScreen.main.bounds.width*0.15, height: height + abs(space) + 1)
+        .frame(width: UIScreen.main.bounds.width*0.15, height: height)
     }
     
-    init(_ pe: Period, _ s: CGFloat){
+    init(_ pe: Period){
         TF.dateFormat = "H:mm"
         period = pe
-        space = s
     }
 }
 
 struct PeriodView_Previews: PreviewProvider {
     static var previews: some View {
-        PeriodView(Period(), 5)
+        PeriodView(Period())
             .previewLayout(.fixed(width: 100, height: 100))
     }
 }
