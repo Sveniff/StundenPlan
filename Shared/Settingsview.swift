@@ -16,9 +16,27 @@ struct Settingsview: View {
             Spacer().frame(height: 100)
             HStack{
                 Text("scale:")
-                Slider(value: $scale, in: 0.5...1.5)
+                Slider(value: $scale, in: 0.5...3)
             }
             Spacer()
+            Button(action: {
+                user.store()
+            }){
+                Text("update")
+            }
+            Button(action: {
+                user.username = ""
+                user.password = ""
+                user.loggedIn = false
+                user.sessionId = nil
+                user.klasseId = nil
+                user.personId = nil
+                user.personType = nil
+                user.lastQuery = nil
+
+            }){
+                Text("Ausloggen")
+            }
         }
         .onAppear{
             scale = user.scale

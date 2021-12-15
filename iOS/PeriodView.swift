@@ -12,7 +12,6 @@ struct PeriodView: View {
     var period: Period
     let TF = DateFormatter()
     var body: some View {
-        let height = minutesBetweenDates(TF.date(from: period.startTime!)!, TF.date(from: period.endTime!)!) * CGFloat(user.scale)
         VStack{
             ZStack{
                 RoundedRectangle(cornerRadius: 5)
@@ -48,10 +47,7 @@ struct PeriodView: View {
                 .multilineTextAlignment(.center)
                 .zIndex(1)
             }
-            .frame(width: UIScreen.main.bounds.width*0.145, height: CGFloat(height))
-            Spacer()
         }
-        .frame(width: UIScreen.main.bounds.width*0.15, height: height)
     }
     
     init(_ pe: Period){

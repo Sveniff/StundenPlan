@@ -15,13 +15,13 @@ struct StundenPlanApp: App {
     @ObservedObject var user: UserData
     init() {
         user = UserData(persistenceController.container.viewContext, persistenceController.container.viewContext.persistentStoreCoordinator!)
-        user.login()
+        user.startSession()
     }
     
     var body: some Scene {
         WindowGroup {
-            if user.password != "" && user.username != "" && user.loggedIn{
-                ContentViewModule().build()
+            if user.loggedIn{
+                ContentView()
                     .environmentObject(user)
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
             }

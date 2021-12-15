@@ -23,7 +23,7 @@ struct DashboardMobile: View {
                         .edgesIgnoringSafeArea(.all)
                         .zIndex(1)
                 case 1:
-                    TimetableViewModule().build()
+                    TimetableView()
                         .zIndex(0)
                         .transition(.opacity)
                     CardView()
